@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>RICSOU v18</title>
+<title>RICSOU v19</title>
 <style>
 *,*::before,*::after,a,a:hover,a:active,button{cursor:none!important}
 #mk{position:fixed;left:0;top:0;width:88px;height:88px;pointer-events:none;z-index:99999;opacity:0;will-change:transform}
@@ -11,8 +11,8 @@
 @keyframes wipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
 a,a:focus,a:active{outline:none;text-decoration:none!important;-webkit-tap-highlight-color:transparent}
 :root{--bar:calc(66px + env(safe-area-inset-top,0px));--stroke:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20240%2064%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M10.7%2044.9%20C9.1%2038.2%2012.4%2019.5%2014.7%2013.5%20C16.9%207.6%2017.1%2010.1%2024.0%209.2%20C30.9%208.4%2045.3%208.3%2056.0%208.3%20C66.7%208.4%2077.3%209.3%2088.0%209.5%20C98.7%209.8%20109.3%2010.1%20120.0%209.7%20C130.7%209.2%20141.3%207.3%20152.0%206.7%20C162.7%206.2%20173.3%205.8%20184.0%206.5%20C194.7%207.1%20208.0%209.4%20216.0%2010.8%20C224.0%2012.1%20230.0%207.8%20232.2%2014.7%20C234.4%2021.5%20231.7%2045.2%20229.0%2052.0%20C226.3%2058.9%20223.5%2055.2%20216.0%2055.7%20C208.5%2056.2%20194.7%2054.7%20184.0%2054.9%20C173.3%2055.0%20162.7%2056.8%20152.0%2056.7%20C141.3%2056.7%20130.7%2054.7%20120.0%2054.8%20C109.3%2055.0%2098.7%2057.8%2088.0%2057.6%20C77.3%2057.4%2066.7%2054.3%2056.0%2053.6%20C45.3%2053.0%2031.6%2055.2%2024.0%2053.7%20C16.4%2052.3%2012.2%2051.6%2010.7%2044.9Z%22%20fill%3D%22%23eaff00%22%20stroke%3D%22%23eaff00%22%20stroke-width%3D%223%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M43%2020%20L152%2022%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%22.25%22%20stroke-width%3D%221.8%22%20fill%3D%22none%22%2F%3E%3Cpath%20d%3D%22M59%2037%20L207%2037%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%22.25%22%20stroke-width%3D%222.3%22%20fill%3D%22none%22%2F%3E%3Cpath%20d%3D%22M46%2046%20L202%2046%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%22.25%22%20stroke-width%3D%222.3%22%20fill%3D%22none%22%2F%3E%3C%2Fsvg%3E")}
-nav a::before,.back::before,.signoff::before{content:"";position:absolute;inset:-.14em -.34em;z-index:-1;background:var(--stroke) center/100% 100% no-repeat;transform:rotate(var(--rot,-1.2deg));clip-path:inset(0 100% 0 0);transition:clip-path .32s cubic-bezier(.35,.6,.25,1);pointer-events:none}
-nav a:hover::before,nav a:active::before,nav a.hl::before,.back:hover::before,.back:active::before,.back.hl::before,.signoff:hover::before,.signoff:active::before,.signoff.hl::before{clip-path:inset(0 0 0 0)}
+nav a::before,.back::before,.signoff::before,.hlw::before{content:"";position:absolute;inset:-.14em -.34em;z-index:-1;background:var(--stroke) center/100% 100% no-repeat;transform:rotate(var(--rot,-1.2deg));clip-path:inset(0 100% 0 0);transition:clip-path .32s cubic-bezier(.35,.6,.25,1);pointer-events:none}
+nav a.on::before,.signoff.on::before,.hlw.on::before,nav a:hover::before,nav a:active::before,nav a.hl::before,.back:hover::before,.back:active::before,.back.hl::before,.signoff:hover::before,.signoff:active::before,.signoff.hl::before{clip-path:inset(0 0 0 0)}
 nav a:hover,nav a:active,nav a.hl,.back:hover,.back:active,.back.hl,.signoff:hover,.signoff:active,.signoff.hl{background:transparent!important;color:#000!important}
 *{box-sizing:border-box;margin:0}
 html,body{height:100%;background:#fff;color:#000;font-family:Arial,Helvetica,sans-serif;overflow:hidden;touch-action:manipulation}
@@ -45,6 +45,7 @@ body.in nav{display:none}
 @media (max-width:760px){.about{font-size:22px}.about p{white-space:normal}}
 @keyframes spl{from{clip-path:inset(-60% 100% -300% -10%)}to{clip-path:inset(-60% -10% -300% -10%)}}
 .splash{position:absolute;left:0;top:0;pointer-events:none;overflow:visible;z-index:5;animation:spl .22s ease-out both}
+.hlw{position:relative;isolation:isolate;white-space:nowrap;display:inline-block;padding:.02em .1em;margin:0 -.1em}
 .sign{text-align:right;margin-top:.5em}
 .signoff{position:relative;isolation:isolate;display:inline-block;padding:.1em .3em;margin-right:1vw;color:#000;text-decoration:none;font-size:1.5em;letter-spacing:.03em}
 </style>
@@ -58,7 +59,7 @@ body.in nav{display:none}
 <img id="mk" alt="" src="data:image/png;base64,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">
 
 <section class="page" id="photos"><div class="pile" id="pile"></div></section>
-<section class="page" id="about"><div class="about"><p>Same name. Different places.</p><p>No message, no meaning to explain.</p><p>Just a name making its way through the streets.</p><div class="sign"><a class="signoff" href="#">RICSOU</a></div></div></section>
+<section class="page" id="about"><div class="about"><p>Same name. Different places.</p><p>No message, no meaning to explain.</p><p><span class="hlw">Just a name</span> making its way through the streets.</p><div class="sign"><a class="signoff" href="#">RICSOU</a></div></div></section>
 
 <script>
 // Logo : une image par lettre ; ordinateur = logo d'origine, téléphone = 3 rangées RI / CS / OU
@@ -66,7 +67,7 @@ var MQ=matchMedia('(max-aspect-ratio:1/1)'),L=[],cur=null;
 var stage=document.getElementById('stage'),mstage=document.getElementById('mstage');
 var MW=1200,MH=1737;
 function addLayer(box,file,name,cw,ch){
-  var im=new Image();im.decoding='async';im.alt=name==='r'?'RICSOU':'';im.src=file+'?v=18';box.appendChild(im);
+  var im=new Image();im.decoding='async';im.alt=name==='r'?'RICSOU':'';im.src=file+'?v=19';box.appendChild(im);
   var o={img:im,box:box,name:name,yel:false,data:null,cw:cw,ch:ch,rect:null};L.push(o);
   im.onload=function(){
     if(o.data)return;o.orig=im.src;o.base=new Image();o.base.src=im.src;
@@ -134,8 +135,23 @@ function loadPhotos(){
    .then(function(a){render(a.filter(function(x){return /\.(jpe?g|png|webp|gif)$/i.test(x.name)}).map(function(x){return x.download_url}).reverse())})
    .catch(function(){pile.textContent='Erreur de chargement des photos.'});
 }
+var hlT=[];
+function autoHl(on){
+  hlT.forEach(clearTimeout);hlT=[];
+  var els=[document.querySelector('.hlw'),document.querySelector('.signoff')];
+  els.forEach(function(el){if(el)el.classList.remove('on')});
+  if(!on)return;
+  els.forEach(function(el,i){if(!el)return;
+    hlT.push(setTimeout(function(){
+      el.style.setProperty('--stroke','url(\"'+STROKES[Math.floor(Math.random()*STROKES.length)]+'\")');
+      el.style.setProperty('--rot',(Math.random()*3-2).toFixed(1)+'deg');
+      el.classList.add('on');
+    },700+i*450));
+  });
+}
 function route(){
   var h=location.hash.slice(1);
+  autoHl(h==='about');
   document.querySelectorAll('.page').forEach(function(p){p.classList.toggle('open',p.id===h)});
   document.body.classList.toggle('in',h==='photos'||h==='about');
   if(h==='photos')loadPhotos();
