@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RICSOU</title>
+<style>
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:#fff;color:#000;font-family:Arial,Helvetica,sans-serif;overflow:hidden}
+nav{position:fixed;top:0;right:0;z-index:20;display:flex;gap:22px;padding:18px 22px}
+nav a,.back{color:#000;text-decoration:none;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+nav a:hover,.back:hover{text-decoration:underline}
+.back{position:fixed;top:0;left:0;z-index:30;padding:18px 22px;display:none}
+body.in .back{display:block}
+#home{height:100%;display:flex;align-items:center;justify-content:center;padding:4vmin}
+#logo{width:min(100%,calc((100vh - 8vmin) * 1.5));height:auto;display:block;
+  -webkit-mask-image:linear-gradient(100deg,#000 45%,transparent 55%);mask-image:linear-gradient(100deg,#000 45%,transparent 55%);
+  -webkit-mask-size:250% 100%;mask-size:250% 100%;-webkit-mask-position:100% 0;mask-position:100% 0;
+  animation:reveal 1.3s steps(14) forwards,boil .6s steps(1) 1.4s infinite;transform-origin:50% 60%}
+@keyframes reveal{from{-webkit-mask-position:100% 0;mask-position:100% 0;transform:scale(1.08) rotate(-2deg)}to{-webkit-mask-position:0 0;mask-position:0 0;transform:none}}
+@keyframes boil{0%{transform:rotate(-.35deg) scale(1)}33%{transform:rotate(.3deg) scale(1.006)}66%{transform:rotate(-.1deg) scale(.998)}}
+.page{position:fixed;inset:0;background:#fff;z-index:10;overflow:auto;padding:80px 24px 40px;transform:translateY(100%);transition:transform .55s cubic-bezier(.7,0,.2,1);visibility:hidden}
+.page.open{transform:none;visibility:visible}
+.pile{position:relative;max-width:1100px;margin:0 auto}
+.pile figure{position:absolute;width:min(46vw,300px);background:#fff;padding:8px;box-shadow:0 6px 24px rgba(0,0,0,.25);opacity:0;transform:translateY(-60px);transition:transform .8s cubic-bezier(.2,1,.3,1),opacity .5s;cursor:pointer}
+.pile figure.show{opacity:1;transform:translate(var(--x),var(--y)) rotate(var(--rot))}
+.pile img{width:100%;display:block}
+.about{max-width:560px;margin:10vh auto;font-size:clamp(22px,4vw,34px);line-height:1.25}
+</style>
+</head>
+<body>
+<nav><a href="#photos">Photos</a><a href="#about">About</a></nav>
+<a class="back" href="#">← RICSOU</a>
+<main id="home"><img id="logo" src="logo.png" alt="RICSOU"></main>
+<section class="page" id="photos"><div class="pile" id="pile"></div></section>
+<section class="page" id="about"><p class="about">RICSOU — tags &amp; photos de rue.<br><br>Contact : @ricsou</p></section>
+<script>
+var pile=document.getElementById('pile'),loaded=false,z=1;
+function render(urls){
+  pile.innerHTML='';
+  var w=Math.min(pile.clientWidth||600,1100),cols=w>700?3:2,cw=Math.min(w*.46,300),step=cw*1.35;
+  urls.forEach(function(u,i){
+    var f=document.createElement('figure'),im=new Image();im.src=u;im.loading='lazy';f.appendChild(im);
+    f.style.left=((i%cols)*(w-cw)/(cols-1))+'px';
+    f.style.top=(Math.floor(i/cols)*step)+'px';
+    f.style.setProperty('--x',(Math.random()*30-15)+'px');
+    f.style.setProperty('--y',(Math.random()*30-15)+'px');
+    f.style.setProperty('--rot',(Math.random()*16-8)+'deg');
+    f.onclick=function(){f.style.zIndex=++z};
+    pile.appendChild(f);setTimeout(function(){f.classList.add('show')},120*i);
+  });
+  pile.style.height=(Math.ceil(urls.length/cols)*step+cw)+'px';
+}
+function loadPhotos(){
+  if(loaded)return;loaded=true;
+  var m=location.hostname.match(/^(.+)\.github\.io$/);
+  if(!m){pile.innerHTML='<p>Les photos s\'afficheront ici une fois le site en ligne sur GitHub Pages.</p>';return}
+  var repo=location.pathname.split('/')[1]||location.hostname;
+  fetch('https://api.github.com/repos/'+m[1]+'/'+repo+'/contents/photos')
+   .then(function(r){return r.json()})
+   .then(function(a){render(a.filter(function(x){return /\.(jpe?g|png|webp|gif)$/i.test(x.name)}).map(function(x){return x.download_url}).reverse())})
+   .catch(function(){pile.textContent='Erreur de chargement des photos.'});
+}
+function route(){
+  var h=location.hash.slice(1);
+  document.querySelectorAll('.page').forEach(function(p){p.classList.toggle('open',p.id===h)});
+  document.body.classList.toggle('in',h==='photos'||h==='about');
+  if(h==='photos')loadPhotos();
+}
+addEventListener('hashchange',route);route();
+</script>
+</body>
+</html>
