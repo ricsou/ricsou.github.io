@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>RICSOU v14</title>
+<title>RICSOU v16</title>
 <style>
 *,*::before,*::after,a,a:hover,a:active,button{cursor:none!important}
 #mk{position:fixed;left:0;top:0;width:88px;height:88px;pointer-events:none;z-index:99999;opacity:0;will-change:transform}
@@ -30,7 +30,7 @@ body.in nav{display:none}
 @media (max-aspect-ratio:1/1){
   #stage{display:none}
   #mstage{display:flex;position:fixed;left:0;right:0;top:var(--bar);bottom:0;flex-direction:column;align-items:center;justify-content:center}
-  .mrow{position:relative;width:min(94vw,calc((100vh - var(--bar)) * .94 / 1.573));width:min(94vw,calc((100dvh - var(--bar)) * .94 / 1.573))}
+  .mrow{position:relative;width:min(94vw,calc((100vh - var(--bar)) * .96 * 1200 / 1802));width:min(94vw,calc((100dvh - var(--bar)) * .96 * 1200 / 1802))}
   nav{left:0;right:0;justify-content:flex-end;gap:14px;background:#fff;padding:calc(12px + env(safe-area-inset-top,0px)) 14px 12px}
   nav a{font-size:clamp(20px,6vw,28px)}
 }
@@ -64,9 +64,9 @@ body.in nav{display:none}
 // Logo : une image par lettre ; ordinateur = logo d'origine, téléphone = 3 rangées RI / CS / OU
 var MQ=matchMedia('(max-aspect-ratio:1/1)'),L=[],cur=null;
 var stage=document.getElementById('stage'),mstage=document.getElementById('mstage');
-var ROWS=[[901,619,['r','idot','i']],[1330,529,['c','s']],[1002,489,['o','u']]];
+var MW=1200,MH=1802;
 function addLayer(box,file,name,cw,ch){
-  var im=new Image();im.decoding='async';im.alt=name==='r'?'RICSOU':'';im.src=file+'?v=14';box.appendChild(im);
+  var im=new Image();im.decoding='async';im.alt=name==='r'?'RICSOU':'';im.src=file+'?v=16';box.appendChild(im);
   var o={img:im,box:box,name:name,yel:false,data:null,cw:cw,ch:ch,rect:null};L.push(o);
   im.onload=function(){
     if(o.data)return;o.orig=im.src;o.base=new Image();o.base.src=im.src;
@@ -83,8 +83,8 @@ function updRects(){L.forEach(function(o){o.rect=o.box.getBoundingClientRect()})
 function buildLogo(){
   L.forEach(function(o){o.img.remove()});L=[];cur=null;stage.innerHTML='';mstage.innerHTML='';
   if(MQ.matches){
-    ROWS.forEach(function(r){var row=document.createElement('div');row.className='mrow';row.style.aspectRatio=r[0]+'/'+r[1];mstage.appendChild(row);
-      r[2].forEach(function(n){addLayer(row,'m_'+n+'.png',n,Math.round(r[0]/2),Math.round(r[1]/2))})});
+    var row=document.createElement('div');row.className='mrow';row.style.aspectRatio=MW+'/'+MH;mstage.appendChild(row);
+    ['r','idot','i','c','s','o','u'].forEach(function(n){addLayer(row,'m_'+n+'.png',n,MW/2,MH/2)});
   }else{
     ['r','idot','i','c','s','o','u'].forEach(function(n){addLayer(stage,'l_'+n+'.png',n,768,512)});
   }
@@ -147,14 +147,25 @@ var mk=document.getElementById('mk'),HX=9,HY=69;
 function placeMk(e){mk.style.opacity=1;mk.style.transform='translate3d('+(e.clientX-HX)+'px,'+(e.clientY-HY)+'px,0)'}
 addEventListener('pointermove',placeMk);
 addEventListener('pointerdown',placeMk);
-var hideT;function hideMk(e){if(e.pointerType==='touch'){clearTimeout(hideT);hideT=setTimeout(function(){mk.style.opacity=0},500)}}
-addEventListener('pointerup',hideMk);addEventListener('pointercancel',hideMk);
-document.documentElement.addEventListener('pointerleave',function(){mk.style.opacity=0});
+/* téléphone : le marqueur reste affiché à la dernière position touchée */
+document.documentElement.addEventListener('pointerleave',function(e){if(e.pointerType!=='touch')mk.style.opacity=0});
 // Clic sur une lettre : surlignage jaune fluo (re-clic = retour au noir)
 var HEX=['#FF2A00','#0033FF','#00C84A','#FF8A00'],last=-1,tint={};
 function tinted(o,ci,cb){var key=o.name+ci;if(tint[key])return cb(tint[key]);
-  var b=o.base,c=document.createElement('canvas');c.width=b.naturalWidth;c.height=b.naturalHeight;
-  var x=c.getContext('2d');x.drawImage(b,0,0);x.globalCompositeOperation='source-in';x.fillStyle=HEX[ci];x.fillRect(0,0,c.width,c.height);
+  var b=o.base,w=b.naturalWidth,h=b.naturalHeight,r=Math.max(3,Math.round(w*.0065));
+  var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');
+  /* silhouette nette : alpha binaire (évite l'effet moucheté) */
+  var sc=document.createElement('canvas');sc.width=w;sc.height=h;var sx=sc.getContext('2d');
+  sx.drawImage(b,0,0);var id=sx.getImageData(0,0,w,h),d=id.data;
+  for(var q=3;q<d.length;q+=4)d[q]=d[q]>100?255:0;sx.putImageData(id,0,0);b=sc;
+  /* 1) silhouette noire = le contour */
+  x.drawImage(b,0,0);x.globalCompositeOperation='source-in';x.fillStyle='#000';x.fillRect(0,0,w,h);
+  /* 2) forme rétrécie de r px = le remplissage couleur */
+  var e=document.createElement('canvas');e.width=w;e.height=h;var y=e.getContext('2d');
+  y.drawImage(b,0,0);y.globalCompositeOperation='destination-in';
+  for(var k=0;k<24;k++){var a=k/24*Math.PI*2;y.drawImage(b,Math.cos(a)*r,Math.sin(a)*r)}
+  y.globalCompositeOperation='source-in';y.fillStyle=HEX[ci];y.fillRect(0,0,w,h);
+  x.globalCompositeOperation='source-over';x.drawImage(e,0,0);
   c.toBlob(function(bl){tint[key]=URL.createObjectURL(bl);cb(tint[key])})}
 function wipe(im){im.classList.remove('wipe');void im.offsetWidth;im.classList.add('wipe')}
 function toggle(o){o.yel=!o.yel;var im=o.img;
