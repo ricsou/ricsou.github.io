@@ -3,7 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>RICSOU v19</title>
+<!-- RICSOU v20 -->
+<title>RICSOU</title>
+<meta name="description" content="RICSOU — Same name. Different places. Un nom qui fait son chemin dans les rues.">
+<link rel="canonical" href="https://ricsou.github.io/">
+<link rel="icon" type="image/png" href="favicon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RICSOU">
+<meta property="og:title" content="RICSOU">
+<meta property="og:description" content="Same name. Different places.">
+<meta property="og:url" content="https://ricsou.github.io/">
+<meta property="og:image" content="https://ricsou.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="RICSOU">
+<meta name="twitter:description" content="Same name. Different places.">
+<meta name="twitter:image" content="https://ricsou.github.io/og-image.png">
 <style>
 *,*::before,*::after,a,a:hover,a:active,button{cursor:none!important}
 #mk{position:fixed;left:0;top:0;width:88px;height:88px;pointer-events:none;z-index:99999;opacity:0;will-change:transform}
@@ -67,7 +83,7 @@ var MQ=matchMedia('(max-aspect-ratio:1/1)'),L=[],cur=null;
 var stage=document.getElementById('stage'),mstage=document.getElementById('mstage');
 var MW=1200,MH=1737;
 function addLayer(box,file,name,cw,ch){
-  var im=new Image();im.decoding='async';im.alt=name==='r'?'RICSOU':'';im.src=file+'?v=19';box.appendChild(im);
+  var im=new Image();im.decoding='async';im.alt=name==='r'?'RICSOU':'';im.src=file+'?v=20';box.appendChild(im);
   var o={img:im,box:box,name:name,yel:false,data:null,cw:cw,ch:ch,rect:null};L.push(o);
   im.onload=function(){
     if(o.data)return;o.orig=im.src;o.base=new Image();o.base.src=im.src;

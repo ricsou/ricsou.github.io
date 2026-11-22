@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ricsou.github.io/sitemap.xml
