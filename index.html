@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>RICSOU v13</title>
+<title>RICSOU v12</title>
 <style>
 *,*::before,*::after,a,a:hover,a:active,button{cursor:none!important}
 #mk{position:fixed;left:0;top:0;width:88px;height:88px;pointer-events:none;z-index:99999;opacity:0;will-change:transform}
@@ -35,18 +35,11 @@ body.in nav{display:none}
 .about{max-width:1300px;margin:8vh auto 0;padding:0 2vw;font-weight:700;font-size:min(3.2vw,44px);line-height:1.3}
 .about p{margin:0 0 .75em;white-space:nowrap}
 @media (max-width:760px){.about{font-size:22px}.about p{white-space:normal}}
-.w{position:relative;display:inline-block;z-index:0}
-.about{position:relative;cursor:none}
-.about .mk{display:none}
-.about .circ,.about .red,.about .yel{ text-decoration:none }
-.about .yel{background:linear-gradient(transparent 72%,#eaff00 72%,#eaff00 91%,transparent 91%)}
+.about p{position:relative;width:fit-content;max-width:100%}
 .sign{text-align:right;margin-top:.5em}
-.signoff{position:relative;display:inline-block;padding:.15em .5em;margin-right:1vw;color:#000;text-decoration:none;font-size:1.5em;letter-spacing:.03em;z-index:0}
-.signoff::before{content:"";position:absolute;inset:-.1em -.35em;z-index:-1;background:var(--stroke) center/100% 100% no-repeat;transform:rotate(-2deg)}
-.ink-splash{position:absolute;left:50%;top:48%;width:min(92%,760px);height:auto;max-height:82%;transform:translate(-50%,-50%) scale(.96);opacity:0;pointer-events:none;z-index:8;transition:opacity .12s ease}
-.about.splashed .ink-splash{opacity:1;transform:translate(-50%,-50%) scale(1)}
-.about.splashed{cursor:none}
-@media(prefers-reduced-motion:reduce){.ink-splash{transition:none}}
+.signoff{display:inline-block;padding:.15em .5em;margin-right:1vw;color:#000;text-decoration:none;font-size:1.5em;letter-spacing:.03em}
+.splash{position:absolute;left:-6%;top:-45%;width:112%;height:190%;object-fit:fill;pointer-events:none;z-index:2;clip-path:inset(0 100% 0 0);transition:clip-path .45s cubic-bezier(.35,.6,.25,1)}
+.about p.sp .splash{clip-path:inset(0 0 0 0)}
 </style>
 </head>
 <body>
@@ -57,43 +50,13 @@ body.in nav{display:none}
 <img id="mk" alt="" src="data:image/png;base64,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">
 
 <section class="page" id="photos"><div class="pile" id="pile"></div></section>
-<section class="page" id="about"><div class="about" id="aboutText">
-<p><span class="w">Same</span> name. <span class="w">Different</span> places.</p>
-<p><span class="w">No</span> message, <span class="w">no</span> meaning to explain.</p>
-<p><span class="w yel">Just a name</span> making its way through the streets.</p>
-<div class="sign"><a class="signoff" href="#">RICSOU</a></div>
-<svg class="ink-splash" viewBox="0 0 520 300" role="presentation" aria-hidden="true">
-<defs>
-  <filter id="brushRough" x="-8%" y="-12%" width="116%" height="124%">
-    <feTurbulence type="fractalNoise" baseFrequency=".035 .12" numOctaves="2" seed="17" result="noise"/>
-    <feDisplacementMap in="SourceGraphic" in2="noise" scale="8" xChannelSelector="R" yChannelSelector="G"/>
-  </filter>
-</defs>
-<g fill="#050505" filter="url(#brushRough)">
-  <path d="M36 105 L130 68 L302 31 L410 44 L493 83 L474 111 L316 103 L159 133 L54 151 Z"/>
-  <path d="M18 145 L150 102 L310 91 L500 119 L506 151 L359 150 L182 178 L44 191 Z"/>
-  <path d="M48 187 L174 151 L344 155 L484 177 L472 208 L314 202 L153 225 L62 220 Z"/>
-  <path d="M92 70 L210 29 L360 13 L414 35 L297 61 L158 98 Z"/>
-  <path d="M121 220 L244 190 L392 199 L440 225 L423 251 L280 244 L161 269 Z"/>
-  <path d="M160 48 L253 8 L306 21 L244 56 L171 77 Z"/>
-  <path d="M28 118 Q92 87 149 81 L163 94 Q98 122 43 145 Z"/>
-  <path d="M207 264 L224 258 L225 298 L219 298 L215 274 Z"/>
-  <path d="M232 250 L241 247 L244 286 L238 290 L235 263 Z"/>
-  <path d="M455 187 L461 184 L464 267 L458 272 Z"/>
-  <path d="M52 185 L58 183 L61 251 L56 258 L54 214 Z"/>
-</g>
-<g fill="none" stroke="#fff" stroke-linecap="round" opacity=".82">
-  <path d="M75 132 Q142 104 211 91 M180 167 Q267 131 359 139 M104 208 Q173 184 251 177" stroke-width="2.5" stroke-dasharray="24 8 3 13"/>
-  <path d="M255 45 L331 31 M300 222 L386 220 M88 93 L129 80" stroke-width="1.8" stroke-dasharray="3 7 18 6"/>
-</g>
-</svg>
-</div></section>
+<section class="page" id="about"><div class="about"><p>Same name. Different places.</p><p>No message, no meaning to explain.</p><p>Just a name making its way through the streets.</p><div class="sign"><a class="signoff" href="#">RICSOU</a></div></div></section>
 
 <script>
 // Logo : une image par lettre, le survol est détecté sur la forme exacte de la lettre
 var names=['r','idot','i','c','s','o','u'],stage=document.getElementById('stage'),L=[],CW=768,CH=512,ready=0;
 names.forEach(function(n){
-  var im=new Image();im.decoding='async';im.alt=n==='r'?'RICSOU':'';im.src='l_'+n+'.png?v=13';stage.appendChild(im);
+  var im=new Image();im.decoding='async';im.alt=n==='r'?'RICSOU':'';im.src='l_'+n+'.png?v=12';stage.appendChild(im);
   var o={img:im,data:null};L.push(o);
   im.onload=function(){
     if(o.data)return;o.orig=im.src;o.base=new Image();o.base.src=im.src;
@@ -153,12 +116,6 @@ function route(){
   if(h==='photos')loadPhotos();
 }
 document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('nav a,.back');if(a){a.classList.add('hl');setTimeout(function(){a.classList.remove('hl')},600)}});
-// ABOUT : un splash de peinture noire au clic, puis retrait au clic suivant.
-var aboutText=document.getElementById('aboutText');
-if(aboutText){aboutText.addEventListener('click',function(e){
-  if(e.target.closest('.signoff'))e.preventDefault();
-  aboutText.classList.toggle('splashed');
-});}
 
 // Marqueur : toujours la souris, sur toutes les pages
 var mk=document.getElementById('mk'),HX=9,HY=69;
@@ -188,6 +145,11 @@ var STROKES=["data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2
 document.addEventListener('pointerover',function(e){var a=e.target.closest&&e.target.closest('nav a,.back');if(!a||a.contains(e.relatedTarget))return;
   a.style.setProperty('--stroke','url("'+STROKES[Math.floor(Math.random()*STROKES.length)]+'")');
   a.style.setProperty('--rot',(Math.random()*4-2.6).toFixed(1)+'deg')});
+// About : clic sur le texte = splash noir, re-clic = disparait
+document.querySelectorAll('.about p').forEach(function(p){
+  var im=new Image();im.className='splash';im.alt='';im.src='splash.png';p.appendChild(im);
+  p.addEventListener('click',function(){p.classList.toggle('sp')});
+});
 addEventListener('hashchange',route);route();
 </script>
 </body>
