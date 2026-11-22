@@ -24,6 +24,9 @@ body.in .back{display:block}
 body.in nav{display:none}
 #stage{position:fixed;inset:0;overflow:visible}
 #stage img{will-change:transform;position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;transition:transform .35s cubic-bezier(.2,1,.3,1);user-select:none;-webkit-user-drag:none}
+#stage:not(.ph) img.p{display:none}
+#stage.ph img.d{display:none}
+#stage.ph:not(.rdy) img.p{opacity:0}
 #stage img.on{transform:scale(1.14);z-index:5}
 .page{position:fixed;inset:0;background:#fff;z-index:40;overflow:auto;padding:clamp(90px,9vw,140px) 24px 40px;transform:translateY(100%);transition:transform .55s cubic-bezier(.7,0,.2,1);visibility:hidden}
 .page.open{transform:none;visibility:visible}
@@ -57,30 +60,70 @@ body.in nav{display:none}
 <section class="page" id="about"><div class="about"><p>Same name. Different places.</p><p>No message, no meaning to explain.</p><p><span class="hlt">Just a name</span> making its way through the streets.</p><div class="sign"><a class="signoff hlt" href="#">RICSOU</a></div></div></section>
 
 <script>
-// Logo : une image par lettre, le survol est détecté sur la forme exacte de la lettre
-var names=['r','idot','i','c','s','o','u'],stage=document.getElementById('stage'),L=[],CW=768,CH=512,ready=0;
-names.forEach(function(n){
-  var im=new Image();im.decoding='async';im.alt=n==='r'?'RICSOU':'';im.src='l_'+n+'.png?v=12';stage.appendChild(im);
-  var o={img:im,data:null};L.push(o);
-  im.onload=function(){
-    if(o.data)return;o.orig=im.src;o.base=new Image();o.base.src=im.src;
-    var c=document.createElement('canvas');c.width=CW;c.height=CH;
-    var x=c.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0,CW,CH);
-    o.data=x.getImageData(0,0,CW,CH).data;
-    // centre de la lettre = point de zoom
-    var sx=0,sy=0,k=0;
-    for(var j=0;j<CH;j+=4)for(var i2=0;i2<CW;i2+=4)if(o.data[(j*CW+i2)*4+3]>128){sx+=i2;sy+=j;k++}
-    if(k)im.style.transformOrigin=(sx/k/CW*100)+'% '+(sy/k/CH*100)+'%';
-  };
-});
-var cur=null,SR=stage.getBoundingClientRect();addEventListener('resize',function(){SR=stage.getBoundingClientRect()});
+// Logo : une image par lettre, le survol est detecte sur la forme exacte de la lettre
+var names=['r','idot','i','c','s','o','u'],stage=document.getElementById('stage'),CW=768,CH=512;
+var L=[],Lp=null,PH=false,cur=null,SR=stage.getBoundingClientRect();
+function build(suffix,cls){
+  var arr=[];
+  names.forEach(function(n){
+    var im=new Image();im.decoding='async';im.alt=(n==='r'&&!suffix)?'RICSOU':'';im.className=cls;im.src='l_'+n+suffix+'.png?v=13';stage.appendChild(im);
+    var o={img:im,data:null,name:n,yel:false};arr.push(o);
+    im.onload=function(){
+      if(o.data)return;o.orig=im.src;o.base=new Image();o.base.src=im.src;
+      var c=document.createElement('canvas');c.width=CW;c.height=CH;
+      var x=c.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0,CW,CH);
+      o.data=x.getImageData(0,0,CW,CH).data;
+      var sx=0,sy=0,k=0,x0=CW,y0=CH,x1=0,y1=0;
+      for(var j=0;j<CH;j++)for(var i2=0;i2<CW;i2++)if(o.data[(j*CW+i2)*4+3]>40){
+        if(i2<x0)x0=i2;if(i2>x1)x1=i2;if(j<y0)y0=j;if(j>y1)y1=j;
+        if(!(i2%4)&&!(j%4)){sx+=i2;sy+=j;k++}}
+      if(k)im.style.transformOrigin=(sx/k/CW*100)+'% '+(sy/k/CH*100)+'%';
+      o.bb=[x0,y0,x1+1,y1+1];layout();
+    };
+  });
+  return arr;
+}
+L=build('','d');
+function act(){return PH&&Lp?Lp:L}
 function hit(e){
-  var r=SR;
-  var px=Math.floor((e.clientX-r.left)/r.width*CW),py=Math.floor((e.clientY-r.top)/r.height*CH),found=null;
-  if(px>=0&&py>=0&&px<CW&&py<CH)
-    for(var i=0;i<L.length;i++){var d=L[i].data;if(d&&d[(py*CW+px)*4+3]>40){found=L[i];break}}
+  var r=SR,found=null,A=act();
+  for(var i=0;i<A.length&&!found;i++){var o=A[i],d=o.data;if(!d)continue;
+    var g=o.geo,px,py;
+    if(g){px=Math.floor((e.clientX-r.left-g.ox)/g.w*CW);py=Math.floor((e.clientY-r.top-g.oy)/g.h*CH)}
+    else{px=Math.floor((e.clientX-r.left)/r.width*CW);py=Math.floor((e.clientY-r.top)/r.height*CH)}
+    if(px>=0&&py>=0&&px<CW&&py<CH&&d[(py*CW+px)*4+3]>40)found=o}
   if(found!==cur){if(cur)cur.img.classList.remove('on');if(found)found.img.classList.add('on');cur=found}
 }
+// Telephone (portrait) : logo recompose en lignes de grosses lettres qui remplissent tout l'ecran
+var GROUPS=[['r'],['i','idot'],['c'],['s'],['o'],['u']];
+function layout(){
+  SR=stage.getBoundingClientRect();
+  var ph=innerHeight>innerWidth*1.05;
+  if(ph&&!Lp)Lp=build('_m','p');
+  if(ph!==PH){PH=ph;stage.classList.toggle('ph',ph);if(cur){cur.img.classList.remove('on');cur=null}}
+  if(!PH||!Lp||!Lp.every(function(o){return o.bb}))return;
+  var W=SR.width,H=SR.height,G=GROUPS.map(function(n0){
+    var m=n0.map(function(n){return Lp[names.indexOf(n)]}),b=[CW,CH,0,0];
+    m.forEach(function(o){b[0]=Math.min(b[0],o.bb[0]);b[1]=Math.min(b[1],o.bb[1]);b[2]=Math.max(b[2],o.bb[2]);b[3]=Math.max(b[3],o.bb[3])});
+    return{m:m,x0:b[0],y0:b[1],w:b[2]-b[0],h:b[3]-b[1]}});
+  var best=null;
+  for(var mask=0;mask<32;mask++){
+    var rows=[[]];G.forEach(function(g,i){rows[rows.length-1].push(g);if(i<5&&(mask>>i&1))rows.push([])});
+    var tot=0;rows.forEach(function(r){var sw=0,mh=0;r.forEach(function(g){sw+=g.w;mh=Math.max(mh,g.h)});r.s=W/sw;r.hh=mh*r.s;tot+=r.hh});
+    var sy=H/tot,cost=Math.abs(Math.log(sy));
+    rows.forEach(function(r){cost+=Math.abs(r.hh*sy/H-1/rows.length)*2});
+    if(!best||cost<best.cost)best={rows:rows,sy:sy,cost:cost}}
+  var y=0;
+  best.rows.forEach(function(r){var x=0,rh=r.hh*best.sy;
+    r.forEach(function(g){var tw=g.w*r.s,th=g.h*r.s*best.sy,tx=x,ty=y+(rh-th)/2;
+      g.m.forEach(function(o){var iw=tw/(g.w/CW),ih=th/(g.h/CH),st=o.img.style,ox=tx-g.x0/CW*iw,oy=ty-g.y0/CH*ih;
+        st.right=st.bottom='auto';st.left=ox+'px';st.top=oy+'px';st.width=iw+'px';st.height=ih+'px';
+        o.geo={ox:ox,oy:oy,w:iw,h:ih}});
+      x+=tw});
+    y+=rh});
+  stage.classList.add('rdy');
+}
+addEventListener('resize',layout);
 var lastE=null,tick=false;
 addEventListener('pointermove',function(e){lastE=e;if(!tick){tick=true;requestAnimationFrame(function(){tick=false;hit(lastE)})}});
 addEventListener('pointerdown',hit);
@@ -130,7 +173,6 @@ addEventListener('pointerdown',function(e){if(e.pointerType==='touch'){clearTime
 ['pointerup','pointercancel'].forEach(function(t){addEventListener(t,function(e){if(e.pointerType==='touch'){mkT=setTimeout(function(){mk.style.opacity=0},700)}})});
 document.documentElement.addEventListener('pointerleave',function(e){if(e.pointerType!=='touch')mk.style.opacity=0});
 // Clic sur une lettre : surlignage jaune fluo (re-clic = retour au noir)
-names.forEach(function(n,i){L[i].name=n;L[i].yel=false});
 var HEX=['#FF2A00','#0033FF','#00C84A','#FF8A00'],last=-1,tint={};
 var holoC=null;
 function holoTex(w,h){
