@@ -42,6 +42,9 @@ body.in nav{display:none}
 .hlt::before{content:"";position:absolute;inset:-.06em -.3em -.02em;z-index:-1;background:var(--stroke) center/100% 100% no-repeat;transform:rotate(-1.2deg);clip-path:inset(0 100% 0 0);transition:clip-path .7s cubic-bezier(.35,.6,.25,1) .9s;pointer-events:none}
 .signoff.hlt::before{inset:-.1em -.35em;transform:rotate(-2deg);transition-delay:1.9s}
 .page.open .hlt::before{clip-path:inset(0 0 0 0)}
+.signoff.hlt::before{background:linear-gradient(115deg,#ffc2ea,#bff3ff,#dccbff,#fff4b8,#c2ffdf,#ffc2ea,#bff3ff,#dccbff,#fff4b8,#c2ffdf,#ffc2ea);background-size:200% 100%;background-repeat:repeat-x;-webkit-mask:var(--stroke) center/100% 100% no-repeat;mask:var(--stroke) center/100% 100% no-repeat;animation:holo 10s linear infinite}
+.signoff.hlt.mv::before{animation:none;background-position:var(--hx,0%) 50%}
+@keyframes holo{to{background-position:200% 50%}}
 .splash{position:absolute;left:-12%;top:-190%;width:124%;height:480%;object-fit:fill;pointer-events:none;z-index:2;clip-path:inset(0 100% 0 0);transition:clip-path .5s cubic-bezier(.35,.6,.25,1)}
 .about p.sp .splash{clip-path:inset(0 0 0 0)}
 </style>
@@ -154,6 +157,11 @@ document.querySelectorAll('.about p').forEach(function(p){
   var im=new Image();im.className='splash';im.alt='';im.src='splash.png';p.appendChild(im);
   p.addEventListener('click',function(){p.classList.toggle('sp')});
 });
+// RICSOU holographique : les reflets suivent le marqueur
+(function(){var so=document.querySelector('.signoff');if(!so)return;
+  so.addEventListener('pointermove',function(e){var r=so.getBoundingClientRect();so.style.setProperty('--hx',((e.clientX-r.left)/r.width*200).toFixed(1)+'%');so.classList.add('mv')});
+  so.addEventListener('pointerleave',function(){so.classList.remove('mv')});
+})();
 addEventListener('hashchange',route);route();
 </script>
 </body>
