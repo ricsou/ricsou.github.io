@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>RICSOU v9</title>
+<title>RICSOU v10</title>
 <style>
 *,*::before,*::after,a,a:hover,a:active,button{cursor:none!important}
 #mk{position:fixed;left:0;top:0;width:88px;height:88px;pointer-events:none;z-index:99999;opacity:0;will-change:transform}
@@ -32,8 +32,13 @@ body.in nav{display:none}
 .pile figure{position:absolute;width:min(46vw,300px);background:#fff;padding:8px;box-shadow:0 6px 24px rgba(0,0,0,.25);opacity:0;transform:translateY(-60px);transition:transform .8s cubic-bezier(.2,1,.3,1),opacity .5s;cursor:pointer}
 .pile figure.show{opacity:1;transform:translate(var(--x),var(--y)) rotate(var(--rot))}
 .pile img{width:100%;display:block}
-.about{max-width:900px;margin:8vh auto;font-size:clamp(24px,4.4vw,54px);font-weight:700;line-height:1.18}
-.about strong{display:inline-block;margin-top:.5em}
+.about{max-width:1300px;margin:6vh auto 0;padding:0 2vw;font-weight:700;font-size:min(3.4vw,46px);line-height:1.15}
+.about p{margin:0 0 .55em;white-space:nowrap}
+@media (max-width:760px){.about{font-size:22px}.about p{white-space:normal}}
+.signoff{position:relative;display:inline-block;margin-top:.45em;padding:.12em .3em;color:#000;text-decoration:none;font-size:1.15em;letter-spacing:.03em}
+.signoff .ring{position:absolute;left:-.25em;top:-.3em;width:calc(100% + .5em);height:calc(100% + .6em);pointer-events:none;overflow:visible}
+.signoff .ring path{fill:none;stroke:#eaff00;stroke-width:9;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .55s cubic-bezier(.4,.1,.3,1)}
+.signoff:hover .ring path,.signoff:active .ring path,.signoff.hl .ring path{stroke-dashoffset:0}
 </style>
 </head>
 <body>
@@ -45,7 +50,7 @@ body.in nav{display:none}
 <img id="mk" alt="" src="data:image/png;base64,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">
 
 <section class="page" id="photos"><div class="pile" id="pile"></div></section>
-<section class="page" id="about"><p class="about">Same name. Different places.<br>No message, no meaning to explain.<br>Just a name making its way through the streets.<br><strong>RICSOU.</strong></p></section>
+<section class="page" id="about"><div class="about"><p>Same name. Different places.</p><p>No message, no meaning to explain.</p><p>Just a name making its way through the streets.</p><a class="signoff" href="#">RICSOU<svg class="ring" viewBox="0 0 320 120" preserveAspectRatio="none"><path pathLength="1" d="M52 92 C16 66 40 20 150 14 C262 8 312 38 300 76 C288 108 210 112 130 108 C54 104 10 84 20 54 C28 30 70 18 128 16"/></svg></a></div></section>
 
 <script>
 // Logo : une image par lettre, le survol est détecté sur la forme exacte de la lettre
