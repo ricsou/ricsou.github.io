@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>RICSOU v16</title>
+<title>RICSOU v17</title>
 <style>
 *,*::before,*::after,a,a:hover,a:active,button{cursor:none!important}
 #mk{position:fixed;left:0;top:0;width:88px;height:88px;pointer-events:none;z-index:99999;opacity:0;will-change:transform}
@@ -30,7 +30,7 @@ body.in nav{display:none}
 @media (max-aspect-ratio:1/1){
   #stage{display:none}
   #mstage{display:flex;position:fixed;left:0;right:0;top:var(--bar);bottom:0;flex-direction:column;align-items:center;justify-content:center}
-  .mrow{position:relative;width:min(94vw,calc((100vh - var(--bar)) * .96 * 1200 / 1802));width:min(94vw,calc((100dvh - var(--bar)) * .96 * 1200 / 1802))}
+  .mrow{position:relative;width:min(100vw,calc((100vh - var(--bar)) * 1200 / 1795));width:min(100vw,calc((100dvh - var(--bar)) * 1200 / 1795))}
   nav{left:0;right:0;justify-content:flex-end;gap:14px;background:#fff;padding:calc(12px + env(safe-area-inset-top,0px)) 14px 12px}
   nav a{font-size:clamp(20px,6vw,28px)}
 }
@@ -64,9 +64,9 @@ body.in nav{display:none}
 // Logo : une image par lettre ; ordinateur = logo d'origine, téléphone = 3 rangées RI / CS / OU
 var MQ=matchMedia('(max-aspect-ratio:1/1)'),L=[],cur=null;
 var stage=document.getElementById('stage'),mstage=document.getElementById('mstage');
-var MW=1200,MH=1802;
+var MW=1200,MH=1795;
 function addLayer(box,file,name,cw,ch){
-  var im=new Image();im.decoding='async';im.alt=name==='r'?'RICSOU':'';im.src=file+'?v=16';box.appendChild(im);
+  var im=new Image();im.decoding='async';im.alt=name==='r'?'RICSOU':'';im.src=file+'?v=17';box.appendChild(im);
   var o={img:im,box:box,name:name,yel:false,data:null,cw:cw,ch:ch,rect:null};L.push(o);
   im.onload=function(){
     if(o.data)return;o.orig=im.src;o.base=new Image();o.base.src=im.src;
@@ -152,7 +152,7 @@ document.documentElement.addEventListener('pointerleave',function(e){if(e.pointe
 // Clic sur une lettre : surlignage jaune fluo (re-clic = retour au noir)
 var HEX=['#FF2A00','#0033FF','#00C84A','#FF8A00'],last=-1,tint={};
 function tinted(o,ci,cb){var key=o.name+ci;if(tint[key])return cb(tint[key]);
-  var b=o.base,w=b.naturalWidth,h=b.naturalHeight,r=Math.max(3,Math.round(w*.0065));
+  var b=o.base,w=b.naturalWidth,h=b.naturalHeight,r=Math.max(4,Math.round(w*(w<=1300?.016:.008)));
   var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');
   /* silhouette nette : alpha binaire (évite l'effet moucheté) */
   var sc=document.createElement('canvas');sc.width=w;sc.height=h;var sx=sc.getContext('2d');
