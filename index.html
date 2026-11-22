@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>RICSOU v17</title>
+<title>RICSOU v18</title>
 <style>
 *,*::before,*::after,a,a:hover,a:active,button{cursor:none!important}
 #mk{position:fixed;left:0;top:0;width:88px;height:88px;pointer-events:none;z-index:99999;opacity:0;will-change:transform}
@@ -18,7 +18,7 @@ nav a:hover,nav a:active,nav a.hl,.back:hover,.back:active,.back.hl,.signoff:hov
 html,body{height:100%;background:#fff;color:#000;font-family:Arial,Helvetica,sans-serif;overflow:hidden;touch-action:manipulation}
 
 nav{position:fixed;top:0;right:0;z-index:50;display:flex;gap:clamp(8px,1.5vw,20px);padding:clamp(12px,1.6vw,24px)}
-nav a,.back{color:#000;background:#fff;text-decoration:none;font-size:clamp(20px,2.6vw,40px);font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:.1em .3em;position:relative;isolation:isolate}
+nav a,.back{color:#000;background:transparent;text-decoration:none;font-size:clamp(20px,2.6vw,40px);font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:.1em .3em;position:relative;isolation:isolate}
 .back{position:fixed;top:calc(clamp(12px,1.6vw,24px) + env(safe-area-inset-top,0px));left:clamp(12px,1.6vw,24px);z-index:60;display:none}
 body.in .back{display:block}
 body.in nav{display:none}
@@ -30,7 +30,7 @@ body.in nav{display:none}
 @media (max-aspect-ratio:1/1){
   #stage{display:none}
   #mstage{display:flex;position:fixed;left:0;right:0;top:var(--bar);bottom:0;flex-direction:column;align-items:center;justify-content:center}
-  .mrow{position:relative;width:min(100vw,calc((100vh - var(--bar)) * 1200 / 1795));width:min(100vw,calc((100dvh - var(--bar)) * 1200 / 1795))}
+  .mrow{position:relative;width:min(100vw,calc((100vh - var(--bar)) * 1200 / 1737));width:min(100vw,calc((100dvh - var(--bar)) * 1200 / 1737))}
   nav{left:0;right:0;justify-content:flex-end;gap:14px;background:#fff;padding:calc(12px + env(safe-area-inset-top,0px)) 14px 12px}
   nav a{font-size:clamp(20px,6vw,28px)}
 }
@@ -64,9 +64,9 @@ body.in nav{display:none}
 // Logo : une image par lettre ; ordinateur = logo d'origine, téléphone = 3 rangées RI / CS / OU
 var MQ=matchMedia('(max-aspect-ratio:1/1)'),L=[],cur=null;
 var stage=document.getElementById('stage'),mstage=document.getElementById('mstage');
-var MW=1200,MH=1795;
+var MW=1200,MH=1737;
 function addLayer(box,file,name,cw,ch){
-  var im=new Image();im.decoding='async';im.alt=name==='r'?'RICSOU':'';im.src=file+'?v=17';box.appendChild(im);
+  var im=new Image();im.decoding='async';im.alt=name==='r'?'RICSOU':'';im.src=file+'?v=18';box.appendChild(im);
   var o={img:im,box:box,name:name,yel:false,data:null,cw:cw,ch:ch,rect:null};L.push(o);
   im.onload=function(){
     if(o.data)return;o.orig=im.src;o.base=new Image();o.base.src=im.src;
