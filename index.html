@@ -136,14 +136,14 @@ var holoC=null;
 function holoTex(w,h){
   var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');
   var g=x.createLinearGradient(0,0,w,h);
-  g.addColorStop(0,'#bfe3ff');g.addColorStop(.35,'#d9c9ff');g.addColorStop(.65,'#bff5ee');g.addColorStop(1,'#ffd9ec');
+  g.addColorStop(0,'#f2ff6e');g.addColorStop(.35,'#d4ff7a');g.addColorStop(.65,'#fff3a0');g.addColorStop(1,'#c6ffb4');
   x.fillStyle=g;x.fillRect(0,0,w,h);
-  var P=[['#ff9fd2',.15,.20,.34],['#a58bff',.42,.08,.30],['#7fcfff',.72,.28,.34],['#8ff5cf',.30,.66,.20],['#fff09a',.60,.58,.20],['#ffb48a',.90,.72,.22],['#9fb4ff',.10,.88,.32],['#ff9fd2',.55,.95,.32],['#b99bff',.92,.12,.30],['#ff9fd2',.45,.45,.22],['#a58bff',.80,.85,.30]];
+  var P=[['#ffd531',.15,.20,.34],['#c6ff3d',.42,.10,.30],['#eaff00',.72,.28,.34],['#b4f5c8',.30,.66,.24],['#fff7b0',.60,.58,.24],['#ffbf33',.90,.72,.26],['#9ff0d8',.10,.88,.30],['#ffe14d',.55,.95,.32],['#d2ff4d',.92,.12,.30],['#ffd531',.45,.45,.22],['#b4f5c8',.80,.85,.28]];
   P.forEach(function(p){var r=p[3]*Math.max(w,h),rg=x.createRadialGradient(p[1]*w,p[2]*h,0,p[1]*w,p[2]*h,r);
     rg.addColorStop(0,p[0]);rg.addColorStop(1,p[0]+'00');x.globalAlpha=1;x.fillStyle=rg;x.fillRect(0,0,w,h)});
   // traînées irisées en diagonale
   x.globalAlpha=.22;var s=x.createLinearGradient(0,h*.1,w,h*.9);
-  ['#ff9fd2','#fff09a','#9fe8ff','#a58bff','#ff9fd2','#7fcfff'].forEach(function(col,i){s.addColorStop(i/5,col)});
+  ['#ffd531','#eaff00','#b4f5c8','#fff7b0','#c6ff3d','#ffbf33'].forEach(function(col,i){s.addColorStop(i/5,col)});
   x.fillStyle=s;x.fillRect(0,0,w,h);x.globalAlpha=1;return c}
 function tinted(o,ci,cb){
   var b=o.base,w=b.naturalWidth,h=b.naturalHeight;
