@@ -38,15 +38,13 @@ body.in nav{display:none}
 .about p{position:relative;width:fit-content;max-width:100%}
 .sign{text-align:right;margin-top:.5em}
 .signoff{display:inline-block;padding:.15em .5em;margin-right:1vw;color:#000;text-decoration:none;font-size:1.5em;letter-spacing:.03em}
-.hlt{position:relative;display:inline-block;isolation:isolate}
-.hlt::before{content:"";position:absolute;inset:-.06em -.3em -.02em;z-index:-1;background:var(--stroke) center/100% 100% no-repeat;transform:rotate(-1.2deg);clip-path:inset(0 100% 0 0);transition:clip-path .7s cubic-bezier(.35,.6,.25,1) .9s;pointer-events:none}
-.signoff.hlt::before{inset:-.1em -.35em;transform:rotate(-2deg);transition-delay:1.9s}
+.hlt{position:relative;display:inline-block;isolation:isolate;line-height:1;padding:.14em .3em;margin:-.14em -.3em}
+.hlt::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--stroke) center/100% 100% no-repeat;transform:rotate(var(--rot,-1.2deg));clip-path:inset(0 100% 0 0);transition:clip-path .7s cubic-bezier(.35,.6,.25,1) var(--dl,.9s);pointer-events:none}
 .page.open .hlt::before{clip-path:inset(0 0 0 0)}
-.signoff.hlt::before{background:linear-gradient(115deg,#ffc2ea,#bff3ff,#dccbff,#fff4b8,#c2ffdf,#ffc2ea,#bff3ff,#dccbff,#fff4b8,#c2ffdf,#ffc2ea);background-size:200% 100%;background-repeat:repeat-x;-webkit-mask:var(--stroke) center/100% 100% no-repeat;mask:var(--stroke) center/100% 100% no-repeat;animation:holo 10s linear infinite}
-.signoff.hlt.mv::before{animation:none;background-position:var(--hx,0%) 50%}
-@keyframes holo{to{background-position:200% 50%}}
-.splash{position:absolute;left:-12%;top:-190%;width:124%;height:480%;object-fit:fill;pointer-events:none;z-index:2;clip-path:inset(0 100% 0 0);transition:clip-path .5s cubic-bezier(.35,.6,.25,1)}
-.about p.sp .splash{clip-path:inset(0 0 0 0)}
+.signoff.hlt{margin-right:calc(1vw - .5em);padding:.2em .5em}
+.scrib{position:absolute;left:-8%;top:-36%;width:116%;height:172%;object-fit:fill;pointer-events:none;z-index:2;clip-path:inset(0 100% 0 0);transition:clip-path .5s cubic-bezier(.35,.6,.25,1)}
+.scrib.b{top:-18%;height:136%;left:-5%;width:110%;transition-delay:.12s}
+.about p.sp .scrib{clip-path:inset(0 0 0 0)}
 </style>
 </head>
 <body>
@@ -134,10 +132,27 @@ document.documentElement.addEventListener('pointerleave',function(){mk.style.opa
 // Clic sur une lettre : surlignage jaune fluo (re-clic = retour au noir)
 names.forEach(function(n,i){L[i].name=n;L[i].yel=false});
 var HEX=['#FF2A00','#0033FF','#00C84A','#FF8A00'],last=-1,tint={};
-function tinted(o,ci,cb){var key=o.name+ci;if(tint[key])return cb(tint[key]);
-  var b=o.base,c=document.createElement('canvas');c.width=b.naturalWidth;c.height=b.naturalHeight;
-  var x=c.getContext('2d');x.drawImage(b,0,0);x.globalCompositeOperation='source-in';x.fillStyle=HEX[ci];x.fillRect(0,0,c.width,c.height);
-  c.toBlob(function(bl){tint[key]=URL.createObjectURL(bl);cb(tint[key])})}
+var holoC=null;
+function holoTex(w,h){
+  var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');
+  var g=x.createLinearGradient(0,0,w,h);
+  g.addColorStop(0,'#bfe3ff');g.addColorStop(.35,'#d9c9ff');g.addColorStop(.65,'#bff5ee');g.addColorStop(1,'#ffd9ec');
+  x.fillStyle=g;x.fillRect(0,0,w,h);
+  var P=[['#ff9fd2',.15,.20,.34],['#a58bff',.42,.08,.30],['#7fcfff',.72,.28,.34],['#8ff5cf',.30,.66,.20],['#fff09a',.60,.58,.20],['#ffb48a',.90,.72,.22],['#9fb4ff',.10,.88,.32],['#ff9fd2',.55,.95,.32],['#b99bff',.92,.12,.30],['#ff9fd2',.45,.45,.22],['#a58bff',.80,.85,.30]];
+  P.forEach(function(p){var r=p[3]*Math.max(w,h),rg=x.createRadialGradient(p[1]*w,p[2]*h,0,p[1]*w,p[2]*h,r);
+    rg.addColorStop(0,p[0]);rg.addColorStop(1,p[0]+'00');x.globalAlpha=1;x.fillStyle=rg;x.fillRect(0,0,w,h)});
+  // traînées irisées en diagonale
+  x.globalAlpha=.22;var s=x.createLinearGradient(0,h*.1,w,h*.9);
+  ['#ff9fd2','#fff09a','#9fe8ff','#a58bff','#ff9fd2','#7fcfff'].forEach(function(col,i){s.addColorStop(i/5,col)});
+  x.fillStyle=s;x.fillRect(0,0,w,h);x.globalAlpha=1;return c}
+function tinted(o,ci,cb){
+  var b=o.base,w=b.naturalWidth,h=b.naturalHeight;
+  if(!holoC||holoC.width!==w)holoC=holoTex(w,h);
+  var c=document.createElement('canvas');c.width=w;c.height=h;
+  var x=c.getContext('2d');x.drawImage(b,0,0);x.globalCompositeOperation='source-in';
+  var sc=1.25+Math.random()*.4,ox=-Math.random()*(sc-1)*w,oy=-Math.random()*(sc-1)*h;
+  x.drawImage(holoC,ox,oy,w*sc,h*sc);
+  c.toBlob(function(bl){cb(URL.createObjectURL(bl))})}
 function wipe(im){im.classList.remove('wipe');void im.offsetWidth;im.classList.add('wipe')}
 function toggle(o){o.yel=!o.yel;var im=o.img;
   if(o.yel){var k;do{k=Math.floor(Math.random()*HEX.length)}while(k===last);last=k;
@@ -152,16 +167,20 @@ var STROKES=["data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2
 document.addEventListener('pointerover',function(e){var a=e.target.closest&&e.target.closest('nav a,.back');if(!a||a.contains(e.relatedTarget))return;
   a.style.setProperty('--stroke','url("'+STROKES[Math.floor(Math.random()*STROKES.length)]+'")');
   a.style.setProperty('--rot',(Math.random()*4-2.6).toFixed(1)+'deg')});
-// About : clic sur le texte = splash noir, re-clic = disparait
+// About : clic sur une ligne = gribouillis noir par-dessus, re-clic = disparait
 document.querySelectorAll('.about p').forEach(function(p){
-  var im=new Image();im.className='splash';im.alt='';im.src='splash.png';p.appendChild(im);
+  [['scrib',1],['scrib b',-1]].forEach(function(c){
+    var im=new Image();im.className=c[0];im.alt='';im.src='scribble.png';
+    im.style.transform='rotate('+(Math.random()*3-1.5).toFixed(2)+'deg) scaleX('+c[1]+') scaleY('+(Math.random()<.5?1:-1)+')';
+    p.appendChild(im)});
   p.addEventListener('click',function(){p.classList.toggle('sp')});
 });
-// RICSOU holographique : les reflets suivent le marqueur
-(function(){var so=document.querySelector('.signoff');if(!so)return;
-  so.addEventListener('pointermove',function(e){var r=so.getBoundingClientRect();so.style.setProperty('--hx',((e.clientX-r.left)/r.width*200).toFixed(1)+'%');so.classList.add('mv')});
-  so.addEventListener('pointerleave',function(){so.classList.remove('mv')});
-})();
+// Surlignages jaunes : meme feutre que BACK / PHOTOS / ABOUT
+document.querySelectorAll('.hlt').forEach(function(el,i){
+  el.style.setProperty('--stroke','url("'+STROKES[(i+1)%STROKES.length]+'")');
+  el.style.setProperty('--rot',(i?-2:-1.2)+'deg');
+  el.style.setProperty('--dl',(0.9+i*0.9)+'s');
+});
 addEventListener('hashchange',route);route();
 </script>
 </body>
