@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>RICSOU v15</title>
+<title>RICSOU v14</title>
 <style>
 *,*::before,*::after,a,a:hover,a:active,button{cursor:none!important}
 #mk{position:fixed;left:0;top:0;width:88px;height:88px;pointer-events:none;z-index:99999;opacity:0;will-change:transform}
@@ -13,12 +13,12 @@ a,a:focus,a:active{outline:none;text-decoration:none!important;-webkit-tap-highl
 :root{--bar:calc(66px + env(safe-area-inset-top,0px));--stroke:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20240%2064%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M10.7%2044.9%20C9.1%2038.2%2012.4%2019.5%2014.7%2013.5%20C16.9%207.6%2017.1%2010.1%2024.0%209.2%20C30.9%208.4%2045.3%208.3%2056.0%208.3%20C66.7%208.4%2077.3%209.3%2088.0%209.5%20C98.7%209.8%20109.3%2010.1%20120.0%209.7%20C130.7%209.2%20141.3%207.3%20152.0%206.7%20C162.7%206.2%20173.3%205.8%20184.0%206.5%20C194.7%207.1%20208.0%209.4%20216.0%2010.8%20C224.0%2012.1%20230.0%207.8%20232.2%2014.7%20C234.4%2021.5%20231.7%2045.2%20229.0%2052.0%20C226.3%2058.9%20223.5%2055.2%20216.0%2055.7%20C208.5%2056.2%20194.7%2054.7%20184.0%2054.9%20C173.3%2055.0%20162.7%2056.8%20152.0%2056.7%20C141.3%2056.7%20130.7%2054.7%20120.0%2054.8%20C109.3%2055.0%2098.7%2057.8%2088.0%2057.6%20C77.3%2057.4%2066.7%2054.3%2056.0%2053.6%20C45.3%2053.0%2031.6%2055.2%2024.0%2053.7%20C16.4%2052.3%2012.2%2051.6%2010.7%2044.9Z%22%20fill%3D%22%23eaff00%22%20stroke%3D%22%23eaff00%22%20stroke-width%3D%223%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M43%2020%20L152%2022%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%22.25%22%20stroke-width%3D%221.8%22%20fill%3D%22none%22%2F%3E%3Cpath%20d%3D%22M59%2037%20L207%2037%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%22.25%22%20stroke-width%3D%222.3%22%20fill%3D%22none%22%2F%3E%3Cpath%20d%3D%22M46%2046%20L202%2046%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%22.25%22%20stroke-width%3D%222.3%22%20fill%3D%22none%22%2F%3E%3C%2Fsvg%3E")}
 nav a::before,.back::before,.signoff::before{content:"";position:absolute;inset:-.14em -.34em;z-index:-1;background:var(--stroke) center/100% 100% no-repeat;transform:rotate(var(--rot,-1.2deg));clip-path:inset(0 100% 0 0);transition:clip-path .32s cubic-bezier(.35,.6,.25,1);pointer-events:none}
 nav a:hover::before,nav a:active::before,nav a.hl::before,.back:hover::before,.back:active::before,.back.hl::before,.signoff:hover::before,.signoff:active::before,.signoff.hl::before{clip-path:inset(0 0 0 0)}
-nav a:hover,nav a:active,nav a.hl,.back:hover,.back:active,.back.hl,.signoff:hover,.signoff:active,.signoff.hl{background:transparent!important;color:#000!important;text-shadow:none!important}
+nav a:hover,nav a:active,nav a.hl,.back:hover,.back:active,.back.hl,.signoff:hover,.signoff:active,.signoff.hl{background:transparent!important;color:#000!important}
 *{box-sizing:border-box;margin:0}
 html,body{height:100%;background:#fff;color:#000;font-family:Arial,Helvetica,sans-serif;overflow:hidden;touch-action:manipulation}
 
 nav{position:fixed;top:0;right:0;z-index:50;display:flex;gap:clamp(8px,1.5vw,20px);padding:clamp(12px,1.6vw,24px)}
-nav a,.back{color:#000;background:transparent;text-shadow:0 0 3px #fff,0 0 3px #fff,1.5px 0 0 #fff,-1.5px 0 0 #fff,0 1.5px 0 #fff,0 -1.5px 0 #fff,1px 1px 0 #fff,-1px -1px 0 #fff,1px -1px 0 #fff,-1px 1px 0 #fff;text-decoration:none;font-size:clamp(20px,2.6vw,40px);font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:.1em .3em;position:relative;isolation:isolate}
+nav a,.back{color:#000;background:#fff;text-decoration:none;font-size:clamp(20px,2.6vw,40px);font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:.1em .3em;position:relative;isolation:isolate}
 .back{position:fixed;top:calc(clamp(12px,1.6vw,24px) + env(safe-area-inset-top,0px));left:clamp(12px,1.6vw,24px);z-index:60;display:none}
 body.in .back{display:block}
 body.in nav{display:none}
