@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>RICSOU v11</title>
+<title>RICSOU v12</title>
 <style>
 *,*::before,*::after,a,a:hover,a:active,button{cursor:none!important}
 #mk{position:fixed;left:0;top:0;width:88px;height:88px;pointer-events:none;z-index:99999;opacity:0;will-change:transform}
@@ -24,7 +24,7 @@ body.in .back{display:block}
 body.in nav{display:none}
 #stage{position:fixed;inset:0;overflow:visible}
 @media (max-aspect-ratio:1/1){#stage{inset:auto;left:0;width:100vw;height:66.67vw;top:50%;transform:translateY(-50%)}}
-#stage img{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;transition:transform .35s cubic-bezier(.2,1,.3,1);user-select:none;-webkit-user-drag:none}
+#stage img{will-change:transform;position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;transition:transform .35s cubic-bezier(.2,1,.3,1);user-select:none;-webkit-user-drag:none}
 #stage img.on{transform:scale(1.14);z-index:5}
 .page{position:fixed;inset:0;background:#fff;z-index:40;overflow:auto;padding:clamp(90px,9vw,140px) 24px 40px;transform:translateY(100%);transition:transform .55s cubic-bezier(.7,0,.2,1);visibility:hidden}
 .page.open{transform:none;visibility:visible}
@@ -40,11 +40,11 @@ body.in nav{display:none}
 .mk path{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .6s cubic-bezier(.4,.1,.3,1);transition-delay:var(--d,.8s)}
 .page.open .mk path{stroke-dashoffset:0}
 .circ .mk{left:-.3em;top:-.3em;width:calc(100% + .6em);height:calc(100% + .6em)}
-.circ .mk path{stroke:#22d922;stroke-width:4}
-.pink .mk{left:-.08em;bottom:-.3em;width:calc(100% + .16em);height:.5em}
-.pink .mk path{stroke:#ef0f86;stroke-width:8}
-.yel .mk{left:-.1em;bottom:-.15em;width:calc(100% + .2em);height:.6em;z-index:-1}
-.yel .mk path{stroke:#eaff00;stroke-width:13}
+.circ .mk path{stroke:#22d922;stroke-width:3.2}
+.red .mk{left:-.08em;bottom:-.34em;width:calc(100% + .16em);height:.55em}
+.red .mk path{stroke:#e8232b;stroke-width:5.5}
+.yel .mk{left:-.1em;bottom:-.22em;width:calc(100% + .2em);height:.34em}
+.yel .mk path{stroke:#eaff00;stroke-width:6}
 .sign{text-align:right;margin-top:.5em}
 .signoff{position:relative;display:inline-block;padding:.15em .5em;margin-right:1vw;color:#000;text-decoration:none;font-size:1.5em;letter-spacing:.03em;z-index:0}
 .signoff::before{content:"";position:absolute;inset:-.1em -.35em;z-index:-1;background:var(--stroke) center/100% 100% no-repeat;transform:rotate(-2deg);clip-path:inset(0 100% 0 0);transition:clip-path .6s cubic-bezier(.35,.6,.25,1) 2.7s}
@@ -52,7 +52,6 @@ body.in nav{display:none}
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><filter id="c0" color-interpolation-filters="sRGB"><feFlood flood-color="#FF2A00"/><feComposite in2="SourceAlpha" operator="in"/></filter><filter id="c1" color-interpolation-filters="sRGB"><feFlood flood-color="#0033FF"/><feComposite in2="SourceAlpha" operator="in"/></filter><filter id="c2" color-interpolation-filters="sRGB"><feFlood flood-color="#00C84A"/><feComposite in2="SourceAlpha" operator="in"/></filter><filter id="c3" color-interpolation-filters="sRGB"><feFlood flood-color="#FF8A00"/><feComposite in2="SourceAlpha" operator="in"/></filter></defs></svg>
 <nav><a href="#photos">Photos</a><a href="#about">About</a></nav>
 <a class="back" href="#">← BACK</a>
 
@@ -60,15 +59,16 @@ body.in nav{display:none}
 <img id="mk" alt="" src="data:image/png;base64,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">
 
 <section class="page" id="photos"><div class="pile" id="pile"></div></section>
-<section class="page" id="about"><div class="about"><p><span class="w circ">Same<svg class="mk" viewBox="0 0 173 100" preserveAspectRatio="none"><path pathLength="1" style="--d:0.7s" d="M35 20 C-3 40 5 95 86 94 C166 93 176 20 95 7 C52 0 17 10 35 34"/></svg></span> name. <span class="w circ">Different<svg class="mk" viewBox="0 0 330 100" preserveAspectRatio="none"><path pathLength="1" style="--d:1.1s" d="M66 20 C-7 40 10 95 165 94 C317 93 337 20 182 7 C99 0 33 10 66 34"/></svg></span> places.</p><p><span class="w pink">No<svg class="mk" viewBox="0 0 100 32" preserveAspectRatio="none"><path pathLength="1" style="--d:1.5s" d="M6 22 C30 18 60 24 94 12"/></svg></span> message, <span class="w pink">no<svg class="mk" viewBox="0 0 100 32" preserveAspectRatio="none"><path pathLength="1" style="--d:1.8s" d="M6 22 C30 18 60 24 94 12"/></svg></span> meaning to explain.</p><p><span class="w yel">Just a name<svg class="mk" viewBox="0 0 290 34" preserveAspectRatio="none"><path pathLength="1" style="--d:2.2s" d="M6 24 C70 19 150 28 284 13"/></svg></span> making its way through the streets.</p><div class="sign"><a class="signoff" href="#">RICSOU</a></div></div></section>
+<section class="page" id="about"><div class="about"><p><span class="w circ">Same<svg class="mk" viewBox="0 0 173 100" preserveAspectRatio="none"><path pathLength="1" style="--d:0.7s" d="M22 5 Q35 8 35 22 C-3 42 7 96 86 94 C166 92 176 22 95 7 C55 0 24 8 35 30 C35 30 35 30 35 30"/></svg></span> name. <span class="w circ">Different<svg class="mk" viewBox="0 0 330 100" preserveAspectRatio="none"><path pathLength="1" style="--d:1.1s" d="M43 5 Q66 8 66 22 C-7 42 13 96 165 94 C317 92 337 22 182 7 C106 0 46 8 66 30 C66 30 66 30 66 30"/></svg></span> places.</p><p><span class="w red">No<svg class="mk" viewBox="0 0 100 40" preserveAspectRatio="none"><path pathLength="1" style="--d:1.5s" d="M4 24 C30 20 62 26 96 15"/><path pathLength="1" style="--d:1.8s" d="M12 35 C40 31 68 36 90 28"/></svg></span> message, <span class="w red">no<svg class="mk" viewBox="0 0 100 40" preserveAspectRatio="none"><path pathLength="1" style="--d:1.9s" d="M4 24 C30 20 62 26 96 15"/><path pathLength="1" style="--d:2.1s" d="M12 35 C40 31 68 36 90 28"/></svg></span> meaning to explain.</p><p><span class="w yel">Just a name<svg class="mk" viewBox="0 0 290 20" preserveAspectRatio="none"><path pathLength="1" style="--d:2.3s" d="M4 12 C70 8 160 15 278 7 C287 6 291 11 285 13"/></svg></span> making its way through the streets.</p><div class="sign"><a class="signoff" href="#">RICSOU</a></div></div></section>
 
 <script>
 // Logo : une image par lettre, le survol est détecté sur la forme exacte de la lettre
 var names=['r','idot','i','c','s','o','u'],stage=document.getElementById('stage'),L=[],CW=768,CH=512,ready=0;
 names.forEach(function(n){
-  var im=new Image();im.alt=n==='r'?'RICSOU':'';im.src='l_'+n+'.png?v=8';stage.appendChild(im);
+  var im=new Image();im.decoding='async';im.alt=n==='r'?'RICSOU':'';im.src='l_'+n+'.png?v=12';stage.appendChild(im);
   var o={img:im,data:null};L.push(o);
   im.onload=function(){
+    if(o.data)return;o.orig=im.src;o.base=new Image();o.base.src=im.src;
     var c=document.createElement('canvas');c.width=CW;c.height=CH;
     var x=c.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0,CW,CH);
     o.data=x.getImageData(0,0,CW,CH).data;
@@ -78,15 +78,16 @@ names.forEach(function(n){
     if(k)im.style.transformOrigin=(sx/k/CW*100)+'% '+(sy/k/CH*100)+'%';
   };
 });
-var cur=null;
+var cur=null,SR=stage.getBoundingClientRect();addEventListener('resize',function(){SR=stage.getBoundingClientRect()});
 function hit(e){
-  var r=stage.getBoundingClientRect();
+  var r=SR;
   var px=Math.floor((e.clientX-r.left)/r.width*CW),py=Math.floor((e.clientY-r.top)/r.height*CH),found=null;
   if(px>=0&&py>=0&&px<CW&&py<CH)
     for(var i=0;i<L.length;i++){var d=L[i].data;if(d&&d[(py*CW+px)*4+3]>40){found=L[i];break}}
   if(found!==cur){if(cur)cur.img.classList.remove('on');if(found)found.img.classList.add('on');cur=found}
 }
-addEventListener('pointermove',hit);
+var lastE=null,tick=false;
+addEventListener('pointermove',function(e){lastE=e;if(!tick){tick=true;requestAnimationFrame(function(){tick=false;hit(lastE)})}});
 addEventListener('pointerdown',hit);
 document.addEventListener('pointerleave',function(){if(cur){cur.img.classList.remove('on');cur=null}});
 
@@ -134,10 +135,16 @@ addEventListener('pointermove',function(e){
 document.documentElement.addEventListener('pointerleave',function(){mk.style.opacity=0});
 // Clic sur une lettre : surlignage jaune fluo (re-clic = retour au noir)
 names.forEach(function(n,i){L[i].name=n;L[i].yel=false});
-var COLS=['c0','c1','c2','c3'],last=-1;
+var HEX=['#FF2A00','#0033FF','#00C84A','#FF8A00'],last=-1,tint={};
+function tinted(o,ci,cb){var key=o.name+ci;if(tint[key])return cb(tint[key]);
+  var b=o.base,c=document.createElement('canvas');c.width=b.naturalWidth;c.height=b.naturalHeight;
+  var x=c.getContext('2d');x.drawImage(b,0,0);x.globalCompositeOperation='source-in';x.fillStyle=HEX[ci];x.fillRect(0,0,c.width,c.height);
+  c.toBlob(function(bl){tint[key]=URL.createObjectURL(bl);cb(tint[key])})}
+function wipe(im){im.classList.remove('wipe');void im.offsetWidth;im.classList.add('wipe')}
 function toggle(o){o.yel=!o.yel;var im=o.img;
-  if(o.yel){var k;do{k=Math.floor(Math.random()*COLS.length)}while(k===last);last=k;im.style.filter='url(#'+COLS[k]+')'}else im.style.filter='';
-  im.classList.remove('wipe');void im.offsetWidth;im.classList.add('wipe')}
+  if(o.yel){var k;do{k=Math.floor(Math.random()*HEX.length)}while(k===last);last=k;
+    tinted(o,k,function(u){im.src=u;wipe(im)})}
+  else{im.src=o.orig;wipe(im)}}
 document.addEventListener('click',function(e){
   if(document.body.classList.contains('in'))return;
   if(e.target.closest&&e.target.closest('nav a,.back'))return;
