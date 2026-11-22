@@ -98,7 +98,7 @@ function hit(e){
 var GROUPS=[['r'],['i','idot'],['c'],['s'],['o'],['u']];
 function layout(){
   SR=stage.getBoundingClientRect();
-  var ph=innerHeight>innerWidth*1.05;
+  var ph=false; // telephone : le logo d'origine est simplement etire sur toute la page
   if(ph&&!Lp)Lp=build('_m','p');
   if(ph!==PH){PH=ph;stage.classList.toggle('ph',ph);if(cur){cur.img.classList.remove('on');cur=null}}
   if(!PH||!Lp||!Lp.every(function(o){return o.bb}))return;
@@ -188,12 +188,12 @@ function holoTex(w,h){
   ['#ffd531','#eaff00','#b4f5c8','#fff7b0','#c6ff3d','#ffbf33'].forEach(function(col,i){s.addColorStop(i/5,col)});
   x.fillStyle=s;x.fillRect(0,0,w,h);x.globalAlpha=1;return c}
 function tinted(o,ci,cb){
-  var b=o.base,w=b.naturalWidth,h=b.naturalHeight,r=Math.round(w*.011);
+  var b=o.base,w=b.naturalWidth,h=b.naturalHeight,R=stage.getBoundingClientRect(),t=Math.max(8,Math.min(14,R.width*.011)),rx=t/(R.width/w),ry=t/(R.height/h);
   if(!holoC||holoC.width!==w)holoC=holoTex(w,h);
   function cv(){var c=document.createElement('canvas');c.width=w;c.height=h;return c}
   // zone hors lettre, dilatée de r px = bande de contour a retirer du remplissage
   var inv=cv(),xi=inv.getContext('2d');xi.fillStyle='#000';xi.fillRect(0,0,w,h);xi.globalCompositeOperation='destination-out';xi.drawImage(b,0,0);
-  var d=cv(),xd=d.getContext('2d');for(var k=0;k<32;k++){var an=k/32*Math.PI*2;xd.drawImage(inv,Math.cos(an)*r,Math.sin(an)*r)}
+  var d=cv(),xd=d.getContext('2d');for(var k=0;k<32;k++){var an=k/32*Math.PI*2;xd.drawImage(inv,Math.cos(an)*rx,Math.sin(an)*ry)}
   var e=cv(),xe=e.getContext('2d');xe.drawImage(b,0,0);xe.globalCompositeOperation='destination-out';xe.drawImage(d,0,0);
   var sc=1.25+Math.random()*.4,ox=-Math.random()*(sc-1)*w,oy=-Math.random()*(sc-1)*h;
   xe.globalCompositeOperation='source-in';xe.drawImage(holoC,ox,oy,w*sc,h*sc);
