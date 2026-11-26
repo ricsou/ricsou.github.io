@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<!-- RICSOU v25 -->
+<!-- RICSOU v26 -->
 <title>RICSOU</title>
 <meta name="description" content="RICSOU — Same name. Different places. Un nom qui fait son chemin dans les rues.">
 <link rel="canonical" href="https://ricsou.github.io/">
@@ -132,7 +132,7 @@ function render(items){
   var w=Math.min(pile.clientWidth||600,1100),cols=w>700?3:2,cw=Math.min(w*.46,300),step=cw*1.35,colH=[],c;
   for(c=0;c<cols;c++)colH.push(0);
   items=items.map(function(it){return typeof it==='string'?{src:it}:it});
-  items.sort(function(a,b){return (b.video?1:0)-(a.video?1:0)});   // la vidéo en première : haut à gauche
+  items.sort(function(a,b){return (a.last?1:0)-(b.last?1:0)||(b.video?1:0)-(a.video?1:0)});   // vidéos en premier (haut à gauche), la poubelle en dernier (bas à droite)
   items.forEach(function(it,i){
     var f=document.createElement('figure'),m,k=0,h=step;
     if(it.video){
@@ -142,6 +142,7 @@ function render(items){
       h=cw*(it.ratio||1)+60;
     }else{m=new Image();m.src=it.src;m.loading='lazy'}
     for(c=1;c<cols;c++)if(colH[c]<colH[k]-1)k=c;     // colonne la plus courte
+    if(it.last){k=cols-1;colH[k]=Math.max(colH[k],Math.max.apply(null,colH)-step*.15)}   // tout en bas, colonne de droite
     f.style.left=(cols>1?k*(w-cw)/(cols-1):0)+'px';
     f.style.top=colH[k]+'px';colH[k]+=h;
     f.style.setProperty('--x',(Math.random()*30-15)+'px');
@@ -153,7 +154,7 @@ function render(items){
   });
   pile.style.height=(Math.max.apply(null,colH)+cw*.3)+'px';
 }
-var HERO=[{src:'camion-ricsou.mp4',video:true}];   // le camion : toujours affiché en haut
+var HERO=[{src:'camion-ricsou.mp4',video:true},{src:'livre-ricsou.mp4',video:true},{src:'poubelle-ricsou.jpg',last:true}];   // le camion : toujours affiché en haut
 function loadPhotos(){
   if(loaded)return;loaded=true;
   var m=location.hostname.match(/^(.+)\.github\.io$/);
