@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<!-- RICSOU v22 -->
+<!-- RICSOU v23 -->
 <title>RICSOU</title>
 <meta name="description" content="RICSOU — Same name. Different places. Un nom qui fait son chemin dans les rues.">
 <link rel="canonical" href="https://ricsou.github.io/">
@@ -159,15 +159,19 @@ function render(items){
   });
   pile.style.height=(Math.max.apply(null,colH)+cw*.3)+'px';
 }
+var HERO=[{src:'camion-ricsou.mp4',video:true}];   // le camion : toujours affiché en haut
 function loadPhotos(){
   if(loaded)return;loaded=true;
   var m=location.hostname.match(/^(.+)\.github\.io$/);
-  if(!m){pile.innerHTML='<p>Les photos s\'afficheront ici une fois le site en ligne sur GitHub Pages.</p>';return}
+  if(!m){render(HERO);return}
   var repo=location.pathname.split('/')[1]||location.hostname;
   fetch('https://api.github.com/repos/'+m[1]+'/'+repo+'/contents/photos')
    .then(function(r){return r.json()})
-   .then(function(a){render(a.filter(function(x){return /\.(jpe?g|png|webp|gif|mp4|webm|mov)$/i.test(x.name)}).map(function(x){return /\.(mp4|webm|mov)$/i.test(x.name)?{src:x.path,video:true}:{src:x.download_url}}).reverse())})
-   .catch(function(){pile.textContent='Erreur de chargement des photos.'});
+   .then(function(a){
+     var l=Array.isArray(a)?a.filter(function(x){return /\.(jpe?g|png|webp|gif|mp4|webm|mov)$/i.test(x.name)}).map(function(x){return /\.(mp4|webm|mov)$/i.test(x.name)?{src:x.path,video:true}:{src:x.download_url}}).reverse():[];
+     render(HERO.concat(l));
+   })
+   .catch(function(){render(HERO)});
 }
 var hlT=[];
 function autoHl(on){
