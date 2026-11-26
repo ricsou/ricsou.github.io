@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<!-- RICSOU v24 -->
+<!-- RICSOU v25 -->
 <title>RICSOU</title>
 <meta name="description" content="RICSOU — Same name. Different places. Un nom qui fait son chemin dans les rues.">
 <link rel="canonical" href="https://ricsou.github.io/">
@@ -199,7 +199,7 @@ addEventListener('pointerdown',placeMk);
 document.documentElement.addEventListener('pointerleave',function(e){if(e.pointerType!=='touch')mk.style.opacity=0});
 // Clic sur une lettre : surlignage jaune fluo (re-clic = retour au noir)
 var HEX=['#FF2A00','#0033FF','#00C84A','#FF8A00'],last=-1,tint={};
-var STREET=['rue1.jpg','rue2.jpg','rue3.jpg'].map(function(f){var i=new Image();i.src=f+'?v=24';return i}),lastS=null;
+var STREET=['rue2.jpg','rue3.jpg','rue4.jpg','rue5.jpg','rue6.jpg','rue7.jpg','rue8.jpg','rue9.jpg','rue10.jpg','rue11.jpg','rue12.jpg'].map(function(f){var i=new Image();i.src=f+'?v=25';return i}),lastS=null;
 function pickStreet(){
   var ok=STREET.filter(function(i){return i.complete&&i.naturalWidth});if(!ok.length)return null;
   var p;do{p=ok[Math.floor(Math.random()*ok.length)]}while(ok.length>1&&p===lastS);lastS=p;return p}
@@ -220,12 +220,16 @@ function tinted(o,ci,cb){
   for(var k=0;k<24;k++){var a=k/24*Math.PI*2;y.drawImage(b,Math.cos(a)*r,Math.sin(a)*r)}
   y.globalCompositeOperation='source-in';
   var S=pickStreet();
-  if(S){ /* un morceau de mur de rue, recadré au hasard sur la lettre */
-    var bw=Math.max(1,x1-x0),bh=Math.max(1,y1-y0),
-        s=Math.max(bw/S.naturalWidth,bh/S.naturalHeight)*(1+Math.random()*.3),
-        dw=S.naturalWidth*s,dh=S.naturalHeight*s,
-        dx=x0-(dw-bw)*Math.random(),dy=y0-(dh-bh)*Math.random();
-    y.drawImage(S,dx,dy,dw,dh);
+  if(S){ /* mix de photos de rue : une base + 3 morceaux d'autres photos collés au hasard */
+    var bw=Math.max(1,x1-x0),bh=Math.max(1,y1-y0);
+    function put(P,k,rx,ry){var s=Math.max(bw*k/P.naturalWidth,bh*k/P.naturalHeight)*(1+Math.random()*.25),
+        dw=P.naturalWidth*s,dh=P.naturalHeight*s,
+        dx=rx==null?x0-(dw-bw)*Math.random():x0+rx*bw-dw/2,dy=ry==null?y0-(dh-bh)*Math.random():y0+ry*bh-dh/2;
+      y.drawImage(P,dx,dy,dw,dh)}
+    put(S,1);y.globalCompositeOperation='source-atop';
+    var ok=STREET.filter(function(i){return i.complete&&i.naturalWidth&&i!==S}),n=3;
+    while(n--&&ok.length){var P=ok.splice(Math.floor(Math.random()*ok.length),1)[0];
+      put(P,.45+Math.random()*.2,Math.random(),Math.random())}
   }else{y.fillStyle=HEX[ci];y.fillRect(0,0,w,h)}
   x.globalCompositeOperation='source-over';x.drawImage(e,0,0);
   c.toBlob(function(bl){var old=o.blobUrl;o.blobUrl=URL.createObjectURL(bl);cb(o.blobUrl);
