@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<!-- RICSOU v20 -->
+<!-- RICSOU v22 -->
 <title>RICSOU</title>
 <meta name="description" content="RICSOU — Same name. Different places. Un nom qui fait son chemin dans les rues.">
 <link rel="canonical" href="https://ricsou.github.io/">
@@ -55,7 +55,8 @@ body.in nav{display:none}
 .pile{position:relative;max-width:1100px;margin:0 auto}
 .pile figure{position:absolute;width:min(46vw,300px);background:#fff;padding:8px;box-shadow:0 6px 24px rgba(0,0,0,.25);opacity:0;transform:translateY(-60px);transition:transform .8s cubic-bezier(.2,1,.3,1),opacity .5s;cursor:pointer}
 .pile figure.show{opacity:1;transform:translate(var(--x),var(--y)) rotate(var(--rot))}
-.pile img{width:100%;display:block}
+.pile img,.pile video{width:100%;display:block;pointer-events:none}
+.pile figure.vid{background:none;box-shadow:none;padding:0}
 .about{max-width:1300px;margin:8vh auto 0;padding:0 2vw;font-weight:700;font-size:min(3.2vw,44px);line-height:1.3}
 .about p{position:relative;width:fit-content;margin:0 0 .75em;white-space:nowrap;user-select:none;-webkit-user-select:none}
 @media (max-width:760px){.about{font-size:22px}.about p{white-space:normal}}
@@ -126,20 +127,37 @@ buildLogo();
 
 // Photos : lues automatiquement dans le dossier "photos" du dépôt GitHub
 var pile=document.getElementById('pile'),loaded=false,z=1;
-function render(urls){
+function render(items){
   pile.innerHTML='';
-  var w=Math.min(pile.clientWidth||600,1100),cols=w>700?3:2,cw=Math.min(w*.46,300),step=cw*1.35;
-  urls.forEach(function(u,i){
-    var f=document.createElement('figure'),im=new Image();im.src=u;im.loading='lazy';f.appendChild(im);
-    f.style.left=((i%cols)*(w-cw)/(cols-1))+'px';
-    f.style.top=(Math.floor(i/cols)*step)+'px';
-    f.style.setProperty('--x',(Math.random()*30-15)+'px');
-    f.style.setProperty('--y',(Math.random()*30-15)+'px');
-    f.style.setProperty('--rot',(Math.random()*16-8)+'deg');
-    f.onclick=function(){f.style.zIndex=++z};
+  var w=Math.min(pile.clientWidth||600,1100),cols=w>700?3:2,cw=Math.min(w*.46,300),step=cw*1.35,colH=[],c;
+  for(c=0;c<cols;c++)colH.push(0);
+  items=items.map(function(it){return typeof it==='string'?{src:it}:it});
+  items.sort(function(a,b){return (b.video?1:0)-(a.video?1:0)});   // les vidéos en haut
+  items.forEach(function(it,i){
+    var f=document.createElement('figure'),m,k,top;
+    if(it.video){
+      m=document.createElement('video');m.src=it.src;m.muted=true;m.loop=true;m.autoplay=true;m.playsInline=true;
+      m.setAttribute('muted','');m.setAttribute('playsinline','');m.preload='auto';
+      m.addEventListener('canplay',function(){var p=m.play();if(p&&p.catch)p.catch(function(){})});
+      // vidéo : grande, centrée, sans cadre, sur toute la largeur
+      var vw=Math.min(w,560);top=Math.max.apply(null,colH);
+      f.className='vid';f.style.width=vw+'px';f.style.left=((w-vw)/2)+'px';f.style.top=top+'px';
+      f.style.setProperty('--x','0px');f.style.setProperty('--y','0px');f.style.setProperty('--rot','0deg');
+      for(c=0;c<cols;c++)colH[c]=top+vw*(it.ratio||1)+10;
+    }else{
+      m=new Image();m.src=it.src;m.loading='lazy';
+      k=0;for(c=1;c<cols;c++)if(colH[c]<colH[k]-1)k=c;
+      f.style.left=(cols>1?k*(w-cw)/(cols-1):0)+'px';
+      f.style.top=colH[k]+'px';colH[k]+=step;
+      f.style.setProperty('--x',(Math.random()*30-15)+'px');
+      f.style.setProperty('--y',(Math.random()*30-15)+'px');
+      f.style.setProperty('--rot',(Math.random()*16-8)+'deg');
+    }
+    f.appendChild(m);
+    f.onclick=function(){f.style.zIndex=++z;if(m.play){var p=m.play();if(p&&p.catch)p.catch(function(){})}};
     pile.appendChild(f);setTimeout(function(){f.classList.add('show')},120*i);
   });
-  pile.style.height=(Math.ceil(urls.length/cols)*step+cw)+'px';
+  pile.style.height=(Math.max.apply(null,colH)+cw*.3)+'px';
 }
 function loadPhotos(){
   if(loaded)return;loaded=true;
@@ -148,7 +166,7 @@ function loadPhotos(){
   var repo=location.pathname.split('/')[1]||location.hostname;
   fetch('https://api.github.com/repos/'+m[1]+'/'+repo+'/contents/photos')
    .then(function(r){return r.json()})
-   .then(function(a){render(a.filter(function(x){return /\.(jpe?g|png|webp|gif)$/i.test(x.name)}).map(function(x){return x.download_url}).reverse())})
+   .then(function(a){render(a.filter(function(x){return /\.(jpe?g|png|webp|gif|mp4|webm|mov)$/i.test(x.name)}).map(function(x){return /\.(mp4|webm|mov)$/i.test(x.name)?{src:x.path,video:true}:{src:x.download_url}}).reverse())})
    .catch(function(){pile.textContent='Erreur de chargement des photos.'});
 }
 var hlT=[];
