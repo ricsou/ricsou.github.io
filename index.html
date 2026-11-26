@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<!-- RICSOU v26 -->
+<!-- RICSOU v27 -->
 <title>RICSOU</title>
 <meta name="description" content="RICSOU — Same name. Different places. Un nom qui fait son chemin dans les rues.">
 <link rel="canonical" href="https://ricsou.github.io/">
@@ -53,9 +53,9 @@ body.in nav{display:none}
 .page{position:fixed;inset:0;background:#fff;z-index:40;overflow:auto;padding:calc(clamp(90px,9vw,140px) + env(safe-area-inset-top,0px)) 24px 40px;transform:translateY(100%);transition:transform .55s cubic-bezier(.7,0,.2,1);visibility:hidden}
 .page.open{transform:none;visibility:visible}
 .pile{position:relative;max-width:1100px;margin:0 auto}
-.pile figure{position:absolute;width:min(46vw,300px);background:#fff;padding:8px;box-shadow:0 6px 24px rgba(0,0,0,.25);opacity:0;transform:translateY(-60px);transition:transform .8s cubic-bezier(.2,1,.3,1),opacity .5s;cursor:pointer}
-.pile figure.show{opacity:1;transform:translate(var(--x),var(--y)) rotate(var(--rot))}
-.pile img,.pile video{width:100%;display:block;pointer-events:none}
+.pile figure{position:absolute;box-sizing:border-box;width:min(46vw,300px);background:#fff;padding:8px;box-shadow:0 6px 24px rgba(0,0,0,.25);opacity:0;transform:translateY(-60px);transition:transform .8s cubic-bezier(.2,1,.3,1),opacity .5s;cursor:pointer}
+.pile figure.show{opacity:1;transform:none}
+.pile img,.pile video{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
 .pile figure.vid{background:none;box-shadow:none;padding:0}
 .about{max-width:1300px;margin:8vh auto 0;padding:0 2vw;font-weight:700;font-size:min(3.2vw,44px);line-height:1.3}
 .about p{position:relative;width:fit-content;margin:0 0 .75em;white-space:nowrap;user-select:none;-webkit-user-select:none}
@@ -129,30 +129,26 @@ buildLogo();
 var pile=document.getElementById('pile'),loaded=false,z=1;
 function render(items){
   pile.innerHTML='';
-  var w=Math.min(pile.clientWidth||600,1100),cols=w>700?3:2,cw=Math.min(w*.46,300),step=cw*1.35,colH=[],c;
-  for(c=0;c<cols;c++)colH.push(0);
+  var w=Math.min(pile.clientWidth||600,1100),cols=w>700?3:2,gap=Math.max(14,w*.03),cw=Math.min((w-gap*(cols-1))/cols,300),n=0;
   items=items.map(function(it){return typeof it==='string'?{src:it}:it});
-  items.sort(function(a,b){return (a.last?1:0)-(b.last?1:0)||(b.video?1:0)-(a.video?1:0)});   // vidéos en premier (haut à gauche), la poubelle en dernier (bas à droite)
+  items.sort(function(a,b){return (a.last?1:0)-(b.last?1:0)||(b.video?1:0)-(a.video?1:0)});   // vidéos d'abord (haut à gauche), poubelle en dernier (bas à droite)
   items.forEach(function(it,i){
-    var f=document.createElement('figure'),m,k=0,h=step;
+    var f=document.createElement('figure'),m;
     if(it.video){
       m=document.createElement('video');m.src=it.src;m.muted=true;m.loop=true;m.autoplay=true;m.playsInline=true;
       m.setAttribute('muted','');m.setAttribute('playsinline','');m.preload='auto';
       m.addEventListener('canplay',function(){var p=m.play();if(p&&p.catch)p.catch(function(){})});
-      h=cw*(it.ratio||1)+60;
     }else{m=new Image();m.src=it.src;m.loading='lazy'}
-    for(c=1;c<cols;c++)if(colH[c]<colH[k]-1)k=c;     // colonne la plus courte
-    if(it.last){k=cols-1;colH[k]=Math.max(colH[k],Math.max.apply(null,colH)-step*.15)}   // tout en bas, colonne de droite
-    f.style.left=(cols>1?k*(w-cw)/(cols-1):0)+'px';
-    f.style.top=colH[k]+'px';colH[k]+=h;
-    f.style.setProperty('--x',(Math.random()*30-15)+'px');
-    f.style.setProperty('--y',(Math.random()*30-15)+'px');
-    f.style.setProperty('--rot',(Math.random()*16-8)+'deg');
+    if(it.last)while(n%cols!==cols-1)n++;            // la poubelle : colonne de droite
+    var col=n%cols,row=Math.floor(n/cols);n++;
+    f.style.width=cw+'px';f.style.height=cw+'px';
+    f.style.left=(cols>1?col*(cw+gap)+(w-(cols*cw+(cols-1)*gap))/2:0)+'px';
+    f.style.top=row*(cw+gap)+'px';
     f.appendChild(m);
     f.onclick=function(){f.style.zIndex=++z;if(m.play){var p=m.play();if(p&&p.catch)p.catch(function(){})}};
-    pile.appendChild(f);setTimeout(function(){f.classList.add('show')},120*i);
+    pile.appendChild(f);setTimeout(function(){f.classList.add('show')},90*i);
   });
-  pile.style.height=(Math.max.apply(null,colH)+cw*.3)+'px';
+  pile.style.height=(Math.ceil(n/cols)*(cw+gap))+'px';
 }
 var HERO=[{src:'camion-ricsou.mp4',video:true},{src:'livre-ricsou.mp4',video:true},{src:'poubelle-ricsou.jpg',last:true}];   // le camion : toujours affiché en haut
 function loadPhotos(){
@@ -221,22 +217,17 @@ function tinted(o,ci,cb){
   for(var k=0;k<24;k++){var a=k/24*Math.PI*2;y.drawImage(b,Math.cos(a)*r,Math.sin(a)*r)}
   y.globalCompositeOperation='source-in';
   var S=pickStreet();
-  if(S){ /* mix de photos de rue : une base + 3 morceaux d'autres photos collés au hasard */
-    var bw=Math.max(1,x1-x0),bh=Math.max(1,y1-y0);
-    function put(P,k,rx,ry){var s=Math.max(bw*k/P.naturalWidth,bh*k/P.naturalHeight)*(1+Math.random()*.25),
-        dw=P.naturalWidth*s,dh=P.naturalHeight*s,
-        dx=rx==null?x0-(dw-bw)*Math.random():x0+rx*bw-dw/2,dy=ry==null?y0-(dh-bh)*Math.random():y0+ry*bh-dh/2;
-      y.drawImage(P,dx,dy,dw,dh)}
-    put(S,1);y.globalCompositeOperation='source-atop';
-    var ok=STREET.filter(function(i){return i.complete&&i.naturalWidth&&i!==S}),n=3;
-    while(n--&&ok.length){var P=ok.splice(Math.floor(Math.random()*ok.length),1)[0];
-      put(P,.45+Math.random()*.2,Math.random(),Math.random())}
+  if(S){ /* une seule photo de rue par lettre, recadrée au hasard */
+    var bw=Math.max(1,x1-x0),bh=Math.max(1,y1-y0),
+        k=Math.max(bw/S.naturalWidth,bh/S.naturalHeight)*(1+Math.random()*.3),
+        dw=S.naturalWidth*k,dh=S.naturalHeight*k;
+    y.drawImage(S,x0-(dw-bw)*Math.random(),y0-(dh-bh)*Math.random(),dw,dh);
   }else{y.fillStyle=HEX[ci];y.fillRect(0,0,w,h)}
   x.globalCompositeOperation='source-over';x.drawImage(e,0,0);
   c.toBlob(function(bl){var old=o.blobUrl;o.blobUrl=URL.createObjectURL(bl);cb(o.blobUrl);
     if(old)setTimeout(function(){URL.revokeObjectURL(old)},800)})}
 function wipe(im){im.classList.remove('wipe');void im.offsetWidth;im.classList.add('wipe')}
-function toggle(o){o.yel=!o.yel;var im=o.img;
+function toggle(o){o.yel=true;var im=o.img;
   if(o.yel){var k;do{k=Math.floor(Math.random()*HEX.length)}while(k===last);last=k;
     tinted(o,k,function(u){im.src=u;wipe(im)})}
   else{im.src=o.orig;wipe(im)}}
