@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<!-- RICSOU v27 -->
+<!-- RICSOU v28 -->
 <title>RICSOU</title>
 <meta name="description" content="RICSOU — Same name. Different places. Un nom qui fait son chemin dans les rues.">
 <link rel="canonical" href="https://ricsou.github.io/">
@@ -52,7 +52,7 @@ body.in nav{display:none}
 }
 .page{position:fixed;inset:0;background:#fff;z-index:40;overflow:auto;padding:calc(clamp(90px,9vw,140px) + env(safe-area-inset-top,0px)) 24px 40px;transform:translateY(100%);transition:transform .55s cubic-bezier(.7,0,.2,1);visibility:hidden}
 .page.open{transform:none;visibility:visible}
-.pile{position:relative;max-width:1100px;margin:0 auto}
+.pile{position:relative;width:100%}
 .pile figure{position:absolute;box-sizing:border-box;width:min(46vw,300px);background:#fff;padding:8px;box-shadow:0 6px 24px rgba(0,0,0,.25);opacity:0;transform:translateY(-60px);transition:transform .8s cubic-bezier(.2,1,.3,1),opacity .5s;cursor:pointer}
 .pile figure.show{opacity:1;transform:none}
 .pile img,.pile video{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
@@ -129,7 +129,7 @@ buildLogo();
 var pile=document.getElementById('pile'),loaded=false,z=1;
 function render(items){
   pile.innerHTML='';
-  var w=Math.min(pile.clientWidth||600,1100),cols=w>700?3:2,gap=Math.max(14,w*.03),cw=Math.min((w-gap*(cols-1))/cols,300),n=0;
+  var w=pile.clientWidth||600,gap=w>700?28:Math.max(14,w*.04),cols=w>700?Math.max(3,Math.floor((w+gap)/(270+gap))):2,cw=w>700?270:Math.min((w-gap)/2,300),n=0;
   items=items.map(function(it){return typeof it==='string'?{src:it}:it});
   items.sort(function(a,b){return (a.last?1:0)-(b.last?1:0)||(b.video?1:0)-(a.video?1:0)});   // vidéos d'abord (haut à gauche), poubelle en dernier (bas à droite)
   items.forEach(function(it,i){
@@ -139,10 +139,10 @@ function render(items){
       m.setAttribute('muted','');m.setAttribute('playsinline','');m.preload='auto';
       m.addEventListener('canplay',function(){var p=m.play();if(p&&p.catch)p.catch(function(){})});
     }else{m=new Image();m.src=it.src;m.loading='lazy'}
-    if(it.last)while(n%cols!==cols-1)n++;            // la poubelle : colonne de droite
+    if(it.last){if(n%cols)n+=cols-n%cols;n+=cols-1}   // la poubelle : nouvelle rangée, tout à droite
     var col=n%cols,row=Math.floor(n/cols);n++;
     f.style.width=cw+'px';f.style.height=cw+'px';
-    f.style.left=(cols>1?col*(cw+gap)+(w-(cols*cw+(cols-1)*gap))/2:0)+'px';
+    f.style.left=col*(cw+gap)+'px';
     f.style.top=row*(cw+gap)+'px';
     f.appendChild(m);
     f.onclick=function(){f.style.zIndex=++z;if(m.play){var p=m.play();if(p&&p.catch)p.catch(function(){})}};
@@ -196,10 +196,13 @@ addEventListener('pointerdown',placeMk);
 document.documentElement.addEventListener('pointerleave',function(e){if(e.pointerType!=='touch')mk.style.opacity=0});
 // Clic sur une lettre : surlignage jaune fluo (re-clic = retour au noir)
 var HEX=['#FF2A00','#0033FF','#00C84A','#FF8A00'],last=-1,tint={};
-var STREET=['rue2.jpg','rue3.jpg','rue4.jpg','rue5.jpg','rue6.jpg','rue7.jpg','rue8.jpg','rue9.jpg','rue10.jpg','rue11.jpg','rue12.jpg'].map(function(f){var i=new Image();i.src=f+'?v=25';return i}),lastS=null;
-function pickStreet(){
+var STREET=['rue2.jpg','rue3.jpg','rue4.jpg','rue6.jpg','rue7.jpg','rue8.jpg','rue9.jpg','rue10.jpg','rue11.jpg','rue12.jpg','rue13.jpg','rue14.jpg','rue15.jpg'].map(function(f){var i=new Image();i.src=f+'?v=28';return i}),deck=[],lastS=null;
+function pickStreet(){   /* paquet mélangé : toutes les photos passent avant qu'une revienne */
   var ok=STREET.filter(function(i){return i.complete&&i.naturalWidth});if(!ok.length)return null;
-  var p;do{p=ok[Math.floor(Math.random()*ok.length)]}while(ok.length>1&&p===lastS);lastS=p;return p}
+  deck=deck.filter(function(i){return ok.indexOf(i)>=0});
+  if(!deck.length){deck=ok.slice();for(var j=deck.length-1;j>0;j--){var r=Math.floor(Math.random()*(j+1)),t=deck[j];deck[j]=deck[r];deck[r]=t}
+    if(deck.length>1&&deck[deck.length-1]===lastS){var u=deck.shift();deck.push(u)}}
+  lastS=deck.pop();return lastS}
 function tinted(o,ci,cb){
   var b=o.base,w=b.naturalWidth,h=b.naturalHeight,r=Math.max(4,Math.round(w*(w<=1300?.016:.008)));
   /* silhouette nette : alpha binaire + boîte englobante de la lettre */
